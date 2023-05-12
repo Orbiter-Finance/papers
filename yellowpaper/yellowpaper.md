@@ -2,14 +2,15 @@
 title: 'Orbiter: A Secure, Fast, Low Gas Decentralized Cross Rollup Bridge Protocol'
 author: Orbiter Finance
 fontsize: 9pt
-geometry: margin=2cm
+geometry: margin=1.5cm
 date: \textit{Pre-release, \today}
 abstract: |
-	With the continuous expansion and development of the second-layer network ecology of Ethereum, such as Arbitrum, Optimism, zkSync, StarkNet, etc, users cross rollup transacations. In this paper, we propose a secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2.
+	With the continuous expansion and development of the second-layer network ecology of Ethereum, such as Arbitrum, Optimism, zkSync, StarkNet, etc, users cross rollup transacations. In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2.
 urlcolor: cyan
 bibliography: yellowpaper.bib
 classoption:
     - twocolumn
+    # - onecloumn
 header-includes:
     - \usepackage{fancyhdr}
     - \usepackage{graphicx}
@@ -27,13 +28,15 @@ header-includes:
 
 # PREVIOUS WORK
 
+Vitalik Buterin had proposed a easy decentralizd cross-layer-2 bridge.
+
 
 # DESIGN PRINCINPLES
 Orbiter Protocol's design follows the flowing principles:
 
-- **Secure.**
-- **Decentralized.**
-- **Efficiency Sensitive.**
+- **Secure.** The priority of security is the highest, mainly around the security of funds involved in the roles in the protocol layer.
+- **Decentralized.** The assets pledged by the role will not be seized by any role in the agreement, and any evil behavior will be punished by the mechanism of the protocol layer.
+- **Efficiency Sensitive.** Efficiency of capital utilization and gas fees for users in the process of cross-chain execution.
 
 # OVERVIEW
 
@@ -45,16 +48,76 @@ Orbiter aims to build a secure, decentralized and efficiency sensitive cross rol
 
 # THE ORBITER PROTOCOL
 
+## Role Defination 
+
+- **User.** User who uses the cross-environment interoperability systems.
+- **Maker.** Provider who provide the cross-rollup service.
+- **Dealer.** Getting incentived by providing a decentralized frontend.
+- **Submitter.** The role used to submit the root of the Dealer revenue tree.
+- **Orbiter DAO.** Is to provide a transparent and dencentrailzed framework for managing and operating the project.
 
 ## Orbiter Transactions
 
-User sends a specific amount of ERC20 or native token to the maker, the amount contants the following parts
+The user sends a specific amount of ERC20 or native token to the maker, the amount of witch corresponds to the following parts
 
-- _Transfer Amounts_ 
-- _Witholding Fee_ 
-- _Destination Chain ID_ 
-- _Dealre ID_ 
-- _EBC ID_ 
+- **Transfer Amounts**: the amount that the user would have needed to cross chain; formally $\mathrm{D_{ta}}$.
+- **Trading Fee**: fees paid to the platform and Maker that is charged as a percentage of the transfer amount; formally $\mathrm{D_{tf}}$.
+- **Witholding Fee**: the fee prepaid to Maker to pay the gas fee for the destination network transfer; formally $\mathrm{D_{wf}}$.
+- **Destination Chain ID**: the target rollup network sepcified by the user,$\mathrm{D_{dci}}$, which is maintained uniformly and globally on L1 by the orbiter protocol, $\mathcal{C}$.
+- **Dealer ID**: formally $\mathrm{D_{di}}$.
+- **EBC ID** : formally $\mathrm{D_{ei}}$.
+
+The source transaction execution time can be verified in source block chain, $\mathrm{TIMESTAMP_{S}}$.
+
+\begin{align*} 
+\begin{gathered}
+    \dot{T}_{S} \equiv (T_{S}, \mathrm{D}, \mathrm{TIMESTAMP_{S}}, \dot{M}) \\
+    \equiv \mathrm{D_{ta}} + \mathrm{D_{tf}} + \mathrm{D_{wf}} + \mathrm{D_{dci}} + \mathrm{D_{di}} + \mathrm{D_{ei}} \to \mathrm{D} \ \ \land \\
+    \mathrm{M_{min}} \leq \mathrm{D_{ta}} \leq \mathrm{M_{max}} \ \ \land \\ 
+    \mathrm{D_{dci}} \in \mathcal{C_{M}}  
+\end{gathered}
+\end{align*}
+
+the maker who response for the user's requirement, the following is its corresponding constraints
+
+- **Maker Address**: formally $\mathrm{M_{A}}$. for all of the address of the selected maker, formally $\mathcal{M_{A}}$.
+- **Supporting Chain List**: formally $\mathcal{C_{M}}$.
+- **Supporting Token List**: formally $\mathcal{T_{M}}$
+- **Repay Time**: formally $\mathrm{REPAYTIME}$.
+- **Transfer Amount Range**: formally $\mathrm{M_{min}}$, $\mathrm{M_{max}}$.
+
+It can be formally defined as :
+
+\begin{align*} 
+\begin{gathered}
+    \dot{M} \equiv M(\mathrm{M_{A}},\mathrm{M_{min}},\mathrm{M_{max}},\mathrm{REPAYTIME},\mathcal{C_{M}}, \mathcal{T_{M}} ) \ \ \land \\
+    \mathrm{M_{A}} \in \mathcal{M_{A}} \ \ \land \\
+    \mathcal{C_{M}} \subset \mathcal{C} \ \ \land \\
+    \mathcal{T_{M}} \subset \mathcal{T}
+\end{gathered}
+\end{align*}
+
+![User Transfer Amount Structure](./diagrams/amount-structure.png)
+
+Destination transaction, when Maker perceives that the user sends a transaction to the maker address according to the agreed protocol, it needs to transfer a specific amount to the user's address in the target network within the specified time range, $\mathrm{REPAYTIME}$.
+
+It can be formally defined as 
+
+\begin{align*} 
+\begin{gathered}
+    \dot{T}_{D} \equiv  (T_{D},\mathrm{REPAYTIME}) \\
+    \equiv D_{ta} \ \ \land \\
+    \mathrm{TIMESTAMP_{D}} - \mathrm{TIMESTAMP_{S}} \leq \mathrm{REPAYTIME}  
+\end{gathered}
+\end{align*}
+
+
+
+source chain transaction, $T_{S}$, target chain transaction, $T_{D}$
+
+Formally, we can refer to a cross rollup transaction as $\dot{T}$:
+
+$$ \tag{1} \dot{T} \equiv (\dot{T}_{S}, \dot{T}_{D}, \dot{M}) \equiv  (T_{S}, T_{D}, M) $$
 
 ## CORE CONTRACT 
 
@@ -72,7 +135,22 @@ User sends a specific amount of ERC20 or native token to the maker, the amount c
 
 # ZK-SPV
 
+Use ZK-SNARK cryptography technology to reduce the gas consumed by the proof of transaction validity
+
 ## Prove Primitives
+
+$$ \dot{\mathrm{SPV}} \equiv \mathrm{SPV} $$
+
+**Proof Generation**
+
+The challenger should provide the ZK Proof of the source transaction, for the exsitence of that.
+\begin{align*} 
+\begin{gathered}
+    p^{z}() \equiv \hat{C}(T_{S}, \mathrm{TINESTAMP_{S}})
+\end{gathered}
+\end{align*}
+
+
 
 
 
@@ -81,4 +159,4 @@ User sends a specific amount of ERC20 or native token to the maker, the amount c
 
 # FUTURE IMPROVEMENTS
 
-# References\
+# REFERENCES\
