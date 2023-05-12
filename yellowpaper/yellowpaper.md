@@ -82,7 +82,7 @@ the maker who response for the user's requirement, the following is its correspo
 
 - **Maker Address**: formally $\mathrm{M_{A}}$. for all of the address of the selected maker, formally $\mathcal{M_{A}}$.
 - **Supporting Chain List**: formally $\mathcal{C_{M}}$.
-- **Supporting Token List**: formally $\mathcal{T_{M}}$
+- **Supporting Token List**: formally $\mathcal{T_{M}}$.
 - **Repay Time**: formally $\mathrm{REPAYTIME}$.
 - **Transfer Amount Range**: formally $\mathrm{M_{min}}$, $\mathrm{M_{max}}$.
 
@@ -121,12 +121,14 @@ $$ \tag{1} \dot{T} \equiv (\dot{T}_{S}, \dot{T}_{D}, \dot{M}) \equiv  (T_{S}, T_
 
 ## CORE CONTRACT 
 
+All smart contracts below are deployed on the Ethereum mainnet:
+
 - **MDC**: Maker Deposit Contract 
 
 - **EBC**: Event Binding Contract 
 
-- **ZK-SPV**: Zero Knowledge Simple Payment Verification. Prove the existence and rationality of Orbiter cross-chain Tx through zero-knowledge proof technology. Existence means that both SrcTx and DstTx can prove on L1 that they actually happened on the corresponding L2, and rationality means It can prove the intention of the user of SrcTx, and the result of the maker’s payment in DstTx conforms to specific rules.
-- **FeeManager**
+- **ZK-SPV**: Zero Knowledge Simple Payment Verification. Prove the existence and rationality of Orbiter cross-chain Tx through zero-knowledge proof technology. Existence means that both source transaction and target transaction can be proved on L1 that they actually happened on the corresponding L2, and rationality means It can prove the intention of the user of SrcTx, and the result of the maker’s payment in DstTx conforms to specific rules.
+- **FeeManager**: Maintain the information of all Dealers, manage and update the benefits that Dealers get from Makers, and ensure the correctness of revenue status updates through the arbitration penalty mechanism.
 - **DaoManager**
 
 ## Off Chain Compoment
@@ -139,20 +141,59 @@ Use ZK-SNARK cryptography technology to reduce the gas consumed by the proof of 
 
 ## Prove Primitives
 
-$$ \dot{\mathrm{SPV}} \equiv \mathrm{SPV} $$
-
-**Proof Generation**
-
 The challenger should provide the ZK Proof of the source transaction, for the exsitence of that.
+
+**Proof Generation**. The proof computation function $\hat{C}$ for user's intention with address $a$: $\mathrm{I_{a}}$ is defined as:
 \begin{align*} 
 \begin{gathered}
-    p^{z}() \equiv \hat{C}(T_{S}, \mathrm{TINESTAMP_{S}})
+    p^{z}(\mathrm{I_{a}}) \equiv \hat{C}(T_{S}, \mathrm{TIMESTAMP_{S}}, \mathrm{D}, \mathrm{M_{A}}, \dot{M}, \mathcal{K}_{z})
 \end{gathered}
 \end{align*}
 
+$\mathcal{K}_{z}$ is the proving key of the circuit.
 
+**Proof Verification**. To verify a validity proof $p^{z}$ genenrated by user $a$'s intention
+\begin{align*} 
+\begin{gathered}
+    v^{z}(\mathrm{I_{a}}) \equiv \hat{V}(p^{z},a,\mathcal{K}_{v})
+\end{gathered}
+\end{align*}
 
+$v^{z}$ is the result of verification of a proof ,which would be storage on Ethereum. $\mathcal{K}_{v}$ is the verification key of the circuit.
 
+\begin{align*} 
+\begin{gathered}
+    p^{z}(\mathrm{R_{a}}) \equiv \hat{C}(T_{D}, \mathrm{TIMESTAMP_{D}}, \mathrm{D_{ta}}, \mathrm{M_{A}}, \dot{M}, \mathcal{K}_{z})
+\end{gathered}
+\end{align*}
+
+\begin{align*} 
+\begin{gathered}
+    v^{z}(\mathrm{R_{a}}) \equiv \hat{V}(p^{z},a,\mathcal{K}_{v})
+\end{gathered}
+\end{align*}
+
+The mechanism of challenge can be formalized as:
+\begin{align*} 
+\begin{gathered}
+    \mathcal{C}_{hallenge}(\mathrm{I_{a}}) \equiv \mathrm{SPV}((p,v)^{z}(\mathrm{I_{a}})) \land \mathrm{SPV}((p,v)^{z}(\mathrm{R_{a}}))
+\end{gathered}
+\end{align*}
+
+The final adjudication can be formalized as:
+
+\begin{align*} 
+\begin{gathered}
+    \mathcal{C}_{hallenge}(\mathrm{I_{a}}) \equiv \mathrm{SPV}((p,v)^{z}(\mathrm{I_{a}})) \land \mathrm{SPV}((p,v)^{z}(\mathrm{R_{a}}))
+\end{gathered}
+\end{align*}
+
+$$
+    \mathcal{A}_{djudication} (\mathrm{I_{a}}) \equiv \left\{ 
+    \begin{aligned}
+    \end{aligned}
+    \right
+$$
 
 # TX ARBITRATION
 # SECURITY MODEL
