@@ -12,6 +12,7 @@ classoption:
     - twocolumn
     # - onecloumn
 header-includes:
+    - \usepackage{amsmath}
     - \usepackage{fancyhdr}
     - \usepackage{graphicx}
     - \usepackage{supertabular}
@@ -28,7 +29,7 @@ header-includes:
 
 # PREVIOUS WORK
 
-Vitalik Buterin had proposed a easy decentralizd cross-layer-2 bridge.
+Vitalik Buterin had proposed a easy decentralizd cross-layer-2 bridge[@vbeasyl2brdige].
 
 
 # DESIGN PRINCINPLES
@@ -69,7 +70,7 @@ The user sends a specific amount of ERC20 or native token to the maker, the amou
 
 The source transaction execution time can be verified in source block chain, $\mathrm{TIMESTAMP_{S}}$.
 
-\begin{align*} 
+\begin{align*}
 \begin{gathered}
     \dot{T}_{S} \equiv (T_{S}, \mathrm{D}, \mathrm{TIMESTAMP_{S}}, \dot{M}) \\
     \equiv \mathrm{D_{ta}} + \mathrm{D_{tf}} + \mathrm{D_{wf}} + \mathrm{D_{dci}} + \mathrm{D_{di}} + \mathrm{D_{ei}} \to \mathrm{D} \ \ \land \\
@@ -123,9 +124,9 @@ $$ \tag{1} \dot{T} \equiv (\dot{T}_{S}, \dot{T}_{D}, \dot{M}) \equiv  (T_{S}, T_
 
 All smart contracts below are deployed on the Ethereum mainnet:
 
-- **MDC**: Maker Deposit Contract 
+- **MDC**: Maker Deposit Contract, keeping Makers's margin, handling the arbitration for user.
 
-- **EBC**: Event Binding Contract 
+- **EBC**: Event Binding Contract, storing the margin rules and Makers' charging standards.
 
 - **ZK-SPV**: Zero Knowledge Simple Payment Verification. Prove the existence and rationality of Orbiter cross-chain Tx through zero-knowledge proof technology. Existence means that both source transaction and target transaction can be proved on L1 that they actually happened on the corresponding L2, and rationality means It can prove the intention of the user of SrcTx, and the result of the maker’s payment in DstTx conforms to specific rules.
 - **FeeManager**: Maintain the information of all Dealers, manage and update the benefits that Dealers get from Makers, and ensure the correctness of revenue status updates through the arbitration penalty mechanism.
@@ -143,6 +144,12 @@ Use ZK-SNARK cryptography technology to reduce the gas consumed by the proof of 
 
 The challenger should provide the ZK Proof of the source transaction, for the exsitence of that.
 
+**Challenge Task**. The challenger should create the challenge task through smart contract firstly , locking the margin of the maker which is challenged , the creating time is $t_{0}$, the challenger should deposit some amount of margin, formally $\mathcal{M}_{C}$ formally
+
+$$
+\mathcal{T} \equiv (T_{S}, t_{0})
+$$
+
 **Proof Generation**. The proof computation function $\hat{C}$ for user's intention with address $a$: $\mathrm{I_{a}}$ is defined as:
 \begin{align*} 
 \begin{gathered}
@@ -152,50 +159,128 @@ The challenger should provide the ZK Proof of the source transaction, for the ex
 
 $\mathcal{K}_{z}$ is the proving key of the circuit.
 
-**Proof Verification**. To verify a validity proof $p^{z}$ genenrated by user $a$'s intention
+**Proof Verification**. To verify a validity proof $p^{z}$ genenrated by user $a$'s intention, the verification time is $t_{1}$
 \begin{align*} 
 \begin{gathered}
-    v^{z}(\mathrm{I_{a}}) \equiv \hat{V}(p^{z},a,\mathcal{K}_{v})
+    v^{z}(\mathrm{I_{a}}) \equiv (\hat{V}(p^{z},a,\mathcal{K}_{v}), t_{1})
 \end{gathered}
 \end{align*}
 
-$v^{z}$ is the result of verification of a proof ,which would be storage on Ethereum. $\mathcal{K}_{v}$ is the verification key of the circuit.
+$v^{z}$ is the result of verification of a proof ,which would be stored on Ethereum. $\mathcal{K}_{v}$ is the verification key of the circuit.
 
+$$
+\dot{\mathrm{SPV}}(\mathrm{I_{a}}) \equiv \mathrm{SPV}((p,v)^{z}(\mathrm{I_{a}}))
+$$
+
+If the maker has reponsed to the user $a$'s intention, $\mathrm{R_{a}}$, then the target transaction's proof computation can be formalized as:
 \begin{align*} 
 \begin{gathered}
     p^{z}(\mathrm{R_{a}}) \equiv \hat{C}(T_{D}, \mathrm{TIMESTAMP_{D}}, \mathrm{D_{ta}}, \mathrm{M_{A}}, \dot{M}, \mathcal{K}_{z})
 \end{gathered}
 \end{align*}
-
+The corresponded verification is, it's time is $t_{2}$:
 \begin{align*} 
 \begin{gathered}
-    v^{z}(\mathrm{R_{a}}) \equiv \hat{V}(p^{z},a,\mathcal{K}_{v})
+    v^{z}(\mathrm{R_{a}}) \equiv (\hat{V}(p^{z},a,\mathcal{K}_{v}), t_{2})
 \end{gathered}
 \end{align*}
 
 The mechanism of challenge can be formalized as:
 \begin{align*} 
 \begin{gathered}
-    \mathcal{C}_{hallenge}(\mathrm{I_{a}}) \equiv \mathrm{SPV}((p,v)^{z}(\mathrm{I_{a}})) \land \mathrm{SPV}((p,v)^{z}(\mathrm{R_{a}}))
+    \mathcal{C}_{hallenge}(\mathrm{I_{a}}) \equiv \dot{\mathrm{SPV}}(\mathrm{I_{a}}) \land \dot{\mathrm{SPV}}(\mathrm{R_{a}})
 \end{gathered}
 \end{align*}
+
+The winner of the challenge is defined as $\mathcal{W}$
 
 The final adjudication can be formalized as:
 
+\begin{equation}
+    \mathcal{A}_{djudication}(\mathrm{I_{a}}) \equiv \left\{
+    \begin{aligned} 
+\mathcal{W} \to \mathcal{C}_{hallenger} \\
+\mathcal{W} \to \mathcal{M}_{aker}
+    \end{aligned}
+    \right.
+\end{equation}
+
+# DEALER FEE
+
+In many decentralized projects, when some front-end projects are subject to censorship and offline, resulting in users unable to directly use the decentralized product.
+
+**Motivation.** We designed a set of incentive mechanisms to allow third-party organizations to deploy front-ends that support the Orbiter cross-chain bridge protocol.
+
+Dealer use the dealer id to identify itself, and register its fee rate to the fee manager contract.
+
+## Submitter Consensus Election
+
+## Transaction Mapping
+
+We accurately map cross-chain transactions to L1 blocks through a set of rules, which must satisfies sequentially unique property.
+The withdraw time of source chain and target chain is $\mathrm{WT_{S}}$, $\mathrm{WT_{D}}$, the mapping block time can be defined as:
 \begin{align*} 
 \begin{gathered}
-    \mathcal{C}_{hallenge}(\mathrm{I_{a}}) \equiv \mathrm{SPV}((p,v)^{z}(\mathrm{I_{a}})) \land \mathrm{SPV}((p,v)^{z}(\mathrm{R_{a}}))
+     f(\dot{T}) = \{\mathrm{TIMESTAMP_{S}} + \mathrm{WT_{S}}, \mathrm{TIMESTAMP_{D}} + \mathrm{WT_{D}}\}_{max} \\ 
+    + 1DAY
 \end{gathered}
 \end{align*}
 
+All transactions meeting this condition are guaranteed to be finalized. The Block of L1 with its block number $n$, noted as $\mathrm{B}$, its correspoding block number, $\mathrm{N_{block}}$, and there is a timestamp of this block, noted as $\mathrm{TIMESTAMP_{B}}$, there exesits a constraint
 $$
-    \mathcal{A}_{djudication} (\mathrm{I_{a}}) \equiv \left\{ 
-    \begin{aligned}
-    \end{aligned}
-    \right
+\mathrm{TIMESTAMP_{B_{n}}} \leq f(\dot{T}) < \mathrm{TIMESTAMP_{B_{n+1}}}
 $$
 
-# TX ARBITRATION
+Then several cross transaction can be mapped to a specific block on L1
+$$
+\dot{\mathrm{BT}} \equiv \mathrm{BT_{(n,m)}} \equiv \mathrm{B_n} \to \{\dot{T_1},\dot{T_2},\ldots,\dot{T_m}\}
+$$
+
+
+## Profit Tree
+
+The key is hashed from Address, $\mathrm{A}$, Chain Id, $\mathrm{C}$, Token Address, $\mathrm{T_{A}}$
+$$
+\mathrm{KEY}(\mathrm{A}) = \mathrm{HASH}(\mathrm{A},\mathrm{C}, \mathrm{T_{A}})
+$$
+
+Its amount is $\mathrm{Amt}$, the value is 
+$$
+\mathrm{VALUE}(\mathrm{A}) = \mathrm{HASH}(\mathrm{KEY}(\mathrm{A}), \mathrm{Amt})
+$$
+
+_State Transition_, formally $\mathrm{ST}$:
+$$
+\dot{\mathrm{ST}} \equiv \mathrm{ST_{(n,n+1)}} \equiv \mathrm{S_{n}} \xrightarrow[\{\dot{T_1},\dot{T_2},\ldots,\dot{T_m}\}]{\mathrm{B_{n+1}}, \mathrm{BT_{(n+1,m)}}} \mathrm{S_{n+1}} 
+$$
+
+_State Transition Tree Root_, formally $\mathrm{STR}$, $s$, $e$ represents Start, End:
+\begin{align*} 
+\begin{gathered}
+    \dot{\mathrm{STR}} \equiv \mathrm{STR}(\mathrm{s},\mathrm{e}) \to \{(\mathrm{B_{s}}, \mathrm{S_{s}}), (\mathrm{B_{s+1}}, \mathrm{S_{s+1}}),\ldots, (\mathrm{B_{e}}, \mathrm{S_{e}}) \} \\
+    \land \{ \mathrm{ST_{(s-1,s)}}, \mathrm{ST_{(s,s+1)}},\ldots,\mathrm{ST_{(e-1,e)}} \}
+\end{gathered}
+\end{align*}
+
+## Submit Profit Tree
+
+\begin{align*} 
+\begin{gathered}
+    \mathcal{S}_{ubmit}(\mathrm{B_{s}}, \mathrm{B_{e}}, \mathrm{STR_{(s,e)}}, \mathrm{S_{e}})  
+\end{gathered}
+\end{align*}
+
+
+## Challenge Protocol
+
+The challenge protocol operates in three phases.
+
+### Phase 1.
+
+### Phase 2.
+
+### Phase 3.
+
 # SECURITY MODEL
 
 # FUTURE IMPROVEMENTS
