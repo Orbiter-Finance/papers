@@ -5,7 +5,7 @@ fontsize: 9pt
 geometry: margin=1.5cm
 date: \textit{Pre-release, \today}
 abstract: |
-	With the continuous expansion and development of the second-layer network ecology of Ethereum, such as Arbitrum, Optimism, zkSync, StarkNet, etc, users cross rollup transacations. In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2.
+	In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2.
 urlcolor: cyan
 bibliography: yellowpaper.bib
 classoption:
@@ -153,35 +153,35 @@ $$
 **Proof Generation**. The proof computation function $\hat{C}$ for user's intention with address $a$: $\mathrm{I_{a}}$ is defined as:
 \begin{align*} 
 \begin{gathered}
-    p^{z}(\mathrm{I_{a}}) \equiv \hat{C}(T_{S}, \mathrm{TIMESTAMP_{S}}, \mathrm{D}, \mathrm{M_{A}}, \dot{M}, \mathcal{K}_{z})
+    p^{z1}(\mathrm{I_{a}}) \equiv \hat{C}(T_{S}, \mathrm{TIMESTAMP_{S}}, \mathrm{D}, \mathrm{M_{A}}, \dot{M}, \mathcal{K}_{z1})
 \end{gathered}
 \end{align*}
 
-$\mathcal{K}_{z}$ is the proving key of the circuit.
+$\mathcal{K}_{z1}$ is the proving key of the circuit.
 
-**Proof Verification**. To verify a validity proof $p^{z}$ genenrated by user $a$'s intention, the verification time is $t_{1}$
+**Proof Verification**. To verify a validity proof $p^{z1}$ genenrated by user $a$'s intention, the verification time is $t_{1}$
 \begin{align*} 
 \begin{gathered}
-    v^{z}(\mathrm{I_{a}}) \equiv (\hat{V}(p^{z},a,\mathcal{K}_{v}), t_{1})
+    v^{z1}(\mathrm{I_{a}}) \equiv (\hat{V}(p^{z1},a,\mathcal{K}_{v1}), t_{1})
 \end{gathered}
 \end{align*}
 
-$v^{z}$ is the result of verification of a proof ,which would be stored on Ethereum. $\mathcal{K}_{v}$ is the verification key of the circuit.
+$v^{z1}$ is the result of verification of a proof ,which would be stored on Ethereum. $\mathcal{K}_{v1}$ is the verification key of the circuit.
 
 $$
-\dot{\mathrm{SPV}}(\mathrm{I_{a}}) \equiv \mathrm{SPV}((p,v)^{z}(\mathrm{I_{a}}))
+\dot{\mathrm{SPV}}(\mathrm{I_{a}}) \equiv \mathrm{SPV}((p,v)^{z1}(\mathrm{I_{a}}))
 $$
 
 If the maker has reponsed to the user $a$'s intention, $\mathrm{R_{a}}$, then the target transaction's proof computation can be formalized as:
 \begin{align*} 
 \begin{gathered}
-    p^{z}(\mathrm{R_{a}}) \equiv \hat{C}(T_{D}, \mathrm{TIMESTAMP_{D}}, \mathrm{D_{ta}}, \mathrm{M_{A}}, \dot{M}, \mathcal{K}_{z})
+    p^{z1}(\mathrm{R_{a}}) \equiv \hat{C}(T_{D}, \mathrm{TIMESTAMP_{D}}, \mathrm{D_{ta}}, \mathrm{M_{A}}, \dot{M}, \mathcal{K}_{z1})
 \end{gathered}
 \end{align*}
 The corresponded verification is, it's time is $t_{2}$:
 \begin{align*} 
 \begin{gathered}
-    v^{z}(\mathrm{R_{a}}) \equiv (\hat{V}(p^{z},a,\mathcal{K}_{v}), t_{2})
+    v^{z1}(\mathrm{R_{a}}) \equiv (\hat{V}(p^{z1},a,\mathcal{K}_{v}), t_{2})
 \end{gathered}
 \end{align*}
 
@@ -233,18 +233,18 @@ $$
 
 Then several cross transaction can be mapped to a specific block on L1
 $$
-\dot{\mathrm{BT}} \equiv \mathrm{BT_{(n,m)}} \equiv \mathrm{B_n} \to \{\dot{T_1},\dot{T_2},\ldots,\dot{T_m}\}
+\dot{\mathrm{BT}} \equiv \mathrm{BT_{(n,m)}} \equiv \{\dot{T_1},\dot{T_2},\ldots,\dot{T_m}\} \xrightarrow[]{map} \mathrm{B_n} 
 $$
 
 
 ## Profit Tree
 
-The key is hashed from Address, $\mathrm{A}$, Chain Id, $\mathrm{C}$, Token Address, $\mathrm{T_{A}}$
+The key is hashed from Address, $\mathrm{A}$, Chain Id, $\mathrm{C}$, Token Address, $\mathrm{T_{A}}$:
 $$
 \mathrm{KEY}(\mathrm{A}) = \mathrm{HASH}(\mathrm{A},\mathrm{C}, \mathrm{T_{A}})
 $$
 
-Its amount is $\mathrm{Amt}$, the value is 
+Its amount is $\mathrm{Amt}$, the value is:
 $$
 \mathrm{VALUE}(\mathrm{A}) = \mathrm{HASH}(\mathrm{KEY}(\mathrm{A}), \mathrm{Amt})
 $$
@@ -270,16 +270,56 @@ _State Transition Tree Root_, formally $\mathrm{STR}$, $s$, $e$ represents Start
 \end{gathered}
 \end{align*}
 
+The submitter finally update state of the balance of all dealers to the Fee Manager Contract.
 
 ## Challenge Protocol
 
-The challenge protocol operates in three phases.
+After submitter submits the update status, it will be reserved for one hour to time as an open challenge time.
 
 ### Phase 1.
 
+The Challenger initiates the challenge process from the Fee Manager contract and pledges a certain margin, at which point the Submitter's margin is also locked and needs to respond to the challenge process
+
 ### Phase 2.
 
+Submitter submits the middle block number and status. The $\mathrm{Pair_{m_1}}$ can be verified by merkel proof.
+
+\begin{align*} 
+\begin{gathered}
+    \mathrm{Pair_{m_1}} \equiv (\mathrm{B_{m_1}}, \mathrm{S_{m_1}})  \\ 
+    \ \ \land \ m_1=\lfloor (s+e)/2 \rfloor \\ 
+    \ \ \land \ \hat{\mathrm{V}}(\mathrm{Pair_{m_1}}, \mathrm{STR_{(s,e)}})
+\end{gathered}
+\end{align*}
+
+Challenger needs to respond to $\mathrm{Pair_{m_1}}$. Now there are two cases:
+
+- If Challenger aggress with Submitter's $\mathrm{Pair_{m_1}}$, the protocol has identified a smaller dispute, $\mathrm{Pair_{m_2}}, m_2= \lfloor (m_1+e)/2 \rfloor$. 
+- If Challenger disagrees with Submitter's $\mathrm{Pair_{m_1}}$, the protocol has identified a smaller dispute, $\mathrm{Pair_{m_{2^{\prime}}}}, m_{2^{\prime}} = \lfloor (s+m_1)/2 \rfloor$.
+
+Submitter and Challenger will finally $\mathrm{Pair_f}$ at most $\lceil log_{2}^{e-s} \rceil$ rounds.
+
 ### Phase 3.
+
+At this time, the Submitter needs to prove the integrity of the $\mathrm{BT_{(f,m)}}$, as well as the proof of the continuous existence of the Pair:
+\begin{align*} 
+\begin{gathered}
+    \mathrm{p} \equiv \hat{C}(\{ \dot{T_1},\ldots,\dot{T_m} \}) \equiv \\ 
+    \mathrm{BT}_{(f,m)} \land \mathrm{ST}_{(f-1, f)}  \land \mathrm{ST}_{(f,f+1)}
+\end{gathered}
+\end{align*}
+
+If the Submitter can't provide the proof in a specific time, the winner will be the Challenger.
+
+If the Submitter provide the proof, the Challenger should provide the proof of the lost $\dot{T_l}$
+
+\begin{align*} 
+\begin{gathered}
+    \mathrm{p} \equiv \hat{C}(\mathrm{B_f},\dot{T_l}) \equiv \\ 
+    \dot{T_l} \notin \{ \dot{T_1},\ldots,\dot{T_m} \} \\
+    \land \ \ \dot{T_l} \xrightarrow[]{map} \mathrm{B_f}
+\end{gathered}
+\end{align*}
 
 # SECURITY MODEL
 
