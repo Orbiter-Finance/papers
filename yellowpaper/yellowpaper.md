@@ -5,7 +5,7 @@ fontsize: 9pt
 geometry: margin=1.5cm
 date: \textit{Pre-release, \today}
 abstract: |
-	In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2.
+	In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2. consolidating the security through ZK-SNAKRS.
 urlcolor: cyan
 bibliography: yellowpaper.bib
 classoption:
@@ -30,6 +30,10 @@ header-includes:
 # PREVIOUS WORK
 
 Vitalik Buterin had proposed a easy decentralizd cross-layer-2 bridge[@vbeasyl2brdige].
+
+Hop[@hopwhitepaper] is a previous cross rollup bridge
+
+Nomad is a previous optimistic interoperability cross-chain protocol
 
 
 # DESIGN PRINCINPLES
@@ -130,7 +134,7 @@ All smart contracts below are deployed on the Ethereum mainnet:
 
 - **ZK-SPV**: Zero Knowledge Simple Payment Verification. Prove the existence and rationality of Orbiter cross-chain Tx through zero-knowledge proof technology. Existence means that both source transaction and target transaction can be proved on L1 that they actually happened on the corresponding L2, and rationality means It can prove the intention of the user of SrcTx, and the result of the maker’s payment in DstTx conforms to specific rules.
 - **FeeManager**: Maintain the information of all Dealers, manage and update the benefits that Dealers get from Makers, and ensure the correctness of revenue status updates through the arbitration penalty mechanism.
-- **DaoManager**
+- **DaoManager**: 
 
 ## Off Chain Compoment
 
@@ -138,7 +142,11 @@ All smart contracts below are deployed on the Ethereum mainnet:
 
 # ZK-SPV
 
+**SPV**, Simplified Payment Verification, firstly proposed in the BitCoin's whitepaper[@bitcoinwhitepaper].
+
 Use ZK-SNARK cryptography technology to reduce the gas consumed by the proof of transaction validity
+
+**Basic Concept**. There are two types of rollups: optimistic rollups and zk-rollups. Their implementations are quite different
 
 ## Prove Primitives
 
@@ -162,7 +170,7 @@ $\mathcal{K}_{z1}$ is the proving key of the circuit.
 **Proof Verification**. To verify a validity proof $p^{z1}$ genenrated by user $a$'s intention, the verification time is $t_{1}$
 \begin{align*} 
 \begin{gathered}
-    v^{z1}(\mathrm{I_{a}}) \equiv (\hat{V}(p^{z1},a,\mathcal{K}_{v1}), t_{1})
+    v^{z1}(\mathrm{I_{a}}) \equiv (\hat{V}(p^{z1}(\mathrm{I_{a}}),a,\mathcal{K}_{v1}), t_{1})
 \end{gathered}
 \end{align*}
 
@@ -181,7 +189,7 @@ If the maker has reponsed to the user $a$'s intention, $\mathrm{R_{a}}$, then th
 The corresponded verification is, it's time is $t_{2}$:
 \begin{align*} 
 \begin{gathered}
-    v^{z1}(\mathrm{R_{a}}) \equiv (\hat{V}(p^{z1},a,\mathcal{K}_{v}), t_{2})
+    v^{z1}(\mathrm{R_{a}}) \equiv (\hat{V}(p^{z1}(\mathrm{R_{a}}),a,\mathcal{K}_{v}), t_{2})
 \end{gathered}
 \end{align*}
 
@@ -214,6 +222,8 @@ In many decentralized projects, when some front-end projects are subject to cens
 Dealer use the dealer id to identify itself, and register its fee rate to the fee manager contract.
 
 ## Submitter Consensus Election
+
+Nodes need to pledge part of the funds first to meet the basic requirements of becoming a Submitter
 
 ## Transaction Mapping
 
@@ -274,7 +284,7 @@ The submitter finally update state of the balance of all dealers to the Fee Mana
 
 ## Challenge Protocol
 
-After submitter submits the update status, it will be reserved for one hour to time as an open challenge time.
+After submitter submits the update status, it will be reserved for one hour to time as an open challenge time. During this time period, anyone can challenge the submitter.
 
 ### Phase 1.
 
@@ -283,7 +293,6 @@ The Challenger initiates the challenge process from the Fee Manager contract and
 ### Phase 2.
 
 Submitter submits the middle block number and status. The $\mathrm{Pair_{m_1}}$ can be verified by merkel proof.
-
 \begin{align*} 
 \begin{gathered}
     \mathrm{Pair_{m_1}} \equiv (\mathrm{B_{m_1}}, \mathrm{S_{m_1}})  \\ 
@@ -301,23 +310,36 @@ Submitter and Challenger will finally $\mathrm{Pair_f}$ at most $\lceil log_{2}^
 
 ### Phase 3.
 
-At this time, the Submitter needs to prove the integrity of the $\mathrm{BT_{(f,m)}}$, as well as the proof of the continuous existence of the Pair:
+At this time, the Submitter needs to prove the integrity of the $\mathrm{BT_{(f,m)}}$, as well as the proof of the continuous existence of the Pair, $\mathcal{K}_{z2}$ is the proving key of the circuit:
 \begin{align*} 
 \begin{gathered}
-    \mathrm{p} \equiv \hat{C}(\{ \dot{T_1},\ldots,\dot{T_m} \}) \equiv \\ 
+    p^{z2}(f,m) \equiv \hat{C}(\{ \dot{T_1},\ldots,\dot{T_m}\}, \mathrm{B_f},\mathcal{K}_{z2}) \equiv \\ 
     \mathrm{BT}_{(f,m)} \land \mathrm{ST}_{(f-1, f)}  \land \mathrm{ST}_{(f,f+1)}
+\end{gathered}
+\end{align*}
+
+the proof of $\mathrm{BT_{(f,m)}}$ should be verified in a specific time on L1, $\mathcal{K}_{v2}$ is the verification key of the circuit:
+\begin{align*} 
+\begin{gathered}
+    v^{z2}(f,m) \equiv (\hat{V}(p^{z2}(f,m),\mathcal{K}_{v2}), t_{1})
 \end{gathered}
 \end{align*}
 
 If the Submitter can't provide the proof in a specific time, the winner will be the Challenger.
 
-If the Submitter provide the proof, the Challenger should provide the proof of the lost $\dot{T_l}$
-
+If the Submitter provide the proof, the Challenger should provide the proof of the lost $\dot{T_l}$,  $\mathcal{K}_{z3}$ is the proving key of the circuit:
 \begin{align*} 
 \begin{gathered}
-    \mathrm{p} \equiv \hat{C}(\mathrm{B_f},\dot{T_l}) \equiv \\ 
+    p^{z3}(l) \equiv \hat{C}(\mathrm{B_f},\dot{T_l}, \mathcal{K}_{z3}) \equiv \\ 
     \dot{T_l} \notin \{ \dot{T_1},\ldots,\dot{T_m} \} \\
     \land \ \ \dot{T_l} \xrightarrow[]{map} \mathrm{B_f}
+\end{gathered}
+\end{align*}
+ 
+The proof of $\dot{T_l}$ should be verified in a specific time, $\mathcal{K}_{v3}$ is the verification key of the circuit:
+\begin{align*} 
+\begin{gathered}
+    v^{z3}(l) \equiv (\hat{V}(p^{z3}(l),\mathcal{K}_{v3}), t_{1})
 \end{gathered}
 \end{align*}
 
