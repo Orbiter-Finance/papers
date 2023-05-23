@@ -31,9 +31,9 @@ header-includes:
 
 Vitalik Buterin had proposed a easy decentralizd cross-layer-2 bridge[@vbeasyl2brdige].
 
-Hop[@hopwhitepaper] is a previous cross rollup bridge
+Hop[@hopwhitepaper] is a previous cross rollup bridge.
 
-Nomad is a previous optimistic interoperability cross-chain protocol
+Nomad is a previous optimistic interoperability cross-chain protocol.
 
 
 # DESIGN PRINCINPLES
@@ -47,9 +47,12 @@ Orbiter Protocol's design follows the flowing principles:
 
 Orbiter aims to build a secure, decentralized and efficiency sensitive cross rollup bridge on Ethereum ecology, and raises the interoperability of the standard assets among these rollup environments. These requirements will dictate the following properties:
 
-- first
-- second
+- Every transaction that the user interacts with the protocol must be a simple transfer transaction, ETH transaction or ERC20 transfer transaction, rather than interacting with a certain contract of the protocol. The user's cross-chain intention is reflected in the series of numbers at the end of the transfer amount. The rules and constraints of this series of numbers are controlled by the protocol layer, which is Orbiter's smart contract.
 
+- After receiving the user's cross-chain intention, the cross-chain market maker needs to respond to the intention, that is, perform the corresponding operation on the target chain.
+- Whether a user or a cross-chain market maker sends a transaction that does not follow the protocol, that is, a malicious behavior, both the challenger and the challenged can prove the legitimacy of their own transactions in an efficient and low-cost way through zero-knowledge proof.
+
+![Cross Rollup Transaction Flow](diagrams/cross-rollup-flow.png)
 
 # THE ORBITER PROTOCOL
 
@@ -134,19 +137,36 @@ All smart contracts below are deployed on the Ethereum mainnet:
 
 - **ZK-SPV**: Zero Knowledge Simple Payment Verification. Prove the existence and rationality of Orbiter cross-chain Tx through zero-knowledge proof technology. Existence means that both source transaction and target transaction can be proved on L1 that they actually happened on the corresponding L2, and rationality means It can prove the intention of the user of SrcTx, and the result of the maker’s payment in DstTx conforms to specific rules.
 - **FeeManager**: Maintain the information of all Dealers, manage and update the benefits that Dealers get from Makers, and ensure the correctness of revenue status updates through the arbitration penalty mechanism.
-- **DaoManager**: 
+- **DaoManager**: Maintain some global parameters of the protocol layer.
 
 ## Off Chain Compoment
 
 - Maker Client
+- Submitter Client
+
+## SECURITY MODEL
+
+Orbiter protocol aims to solve the cross-rollup problems instead of the cross-chain issues. The cross-chain project's primary goal is to ensure the security of transactions between two unique chains and avoid the 51% attack. But the cross-rollup project uses the same Ethereum data layer with each rollup which can naturally prevent the 51% attack. Based on this, Orbiter comes up with a cross-rollup mechanism that can inherit the security of Ethereum L2[@rollupbridgesecurity].
 
 # ZK-SPV
 
-**SPV**, Simplified Payment Verification, firstly proposed in the BitCoin's whitepaper[@bitcoinwhitepaper].
+**SPV**. Simplified Payment Verification, firstly proposed in the BitCoin's whitepaper[@bitcoinwhitepaper]. It allows a transaction recipient to prove that the sender has control of the source funds of the payment they are offering without downloading the full Blockchain, by utilising the properties of Merkle proofs[@bitcoinwikikspv].
+
+**zk-SNARKS**. Zero-Knowledge Succinct Non-Interactive Argument of Knowledge, which is widely used in the blockchain community for its features of privacy and scaling. We currently only talk about the latter.
+
+zk-SNARKS consists of the following cryptographic primitives:
+
+- $\mathrm{Setup}(1^{\lambda}) \rightarrow \mathrm{Params}$. Given the security paramater $\lambda$, the mapping $e:\mathrm{G_1} \times \mathrm{G_2} \rightarrow \mathrm{G_T}$ is a nondegenerate bilinear pairing. $\mathrm{G_1}, \mathrm{G_2}$ are cyclic groups in prime order $p$, and their generators are $\mathrm{g_1}, \mathrm{g_2}$ respectively, $\mathrm{Params} = (p, \mathrm{G_1}, \mathrm{G_2}, \mathrm{G_T}, \mathrm{g_1}, \mathrm{g_2}, e)$.
+- $\mathrm{KeyGen}(\mathrm{Params}, \mathrm{C}) \rightarrow (\mathcal{K}_p, \mathcal{K}_v)$. Given the arithmetic circuit $\mathrm{C}$, convert $\mathrm{C}$ into a polynomial relationship $\mathrm{R}_c$, and then generate the proving key $\mathrm{K}_p$ and verification key $\mathrm{K}_v$.
+- $\mathrm{ProofComputation}(\mathrm{K}_p, x, w) \rightarrow \pi$. Given the proving key $\mathrm{K}_p$, the public commitment $x$, and the secret witness $w$, generate a zk proof $\pi$ about $x$ and $w$ through the circuit $\mathrm{C}$.
+- $\mathrm{Verification}(\mathrm{K}_v, x, \pi) \rightarrow \mathrm{rlt}$. Given the verification key $\mathrm{K}_v$, public commitment $x$, and zk proof $\pi$, output binary bit $\mathrm{rlt}$; $\mathrm{rlt} = 1$ when the proof is legitimate; otherwise $\mathrm{rlt} = 0$.
+
+**Recrusive ZKP**
+
+**Basic Concept**. There are two types of rollups: optimistic rollups and zk-rollups. Their implementations are quite different, which also leads to their spv implementations are also very different[@spv_on_eth_l2].
+
 
 Use ZK-SNARK cryptography technology to reduce the gas consumed by the proof of transaction validity
-
-**Basic Concept**. There are two types of rollups: optimistic rollups and zk-rollups. Their implementations are quite different
 
 ## Prove Primitives
 
@@ -167,7 +187,7 @@ $$
 
 $\mathcal{K}_{z1}$ is the proving key of the circuit.
 
-**Proof Verification**. To verify a validity proof $p^{z1}$ genenrated by user $a$'s intention, the verification time is $t_{1}$
+**Proof Verification**. To verify a validity proof $p^{z1}$ genenrated by user $a$'s intention, the verification time is $t_{1}$:
 \begin{align*} 
 \begin{gathered}
     v^{z1}(\mathrm{I_{a}}) \equiv (\hat{V}(p^{z1}(\mathrm{I_{a}}),a,\mathcal{K}_{v1}), t_{1})
@@ -249,6 +269,8 @@ $$
 
 ## Profit Tree
 
+We use a Merkle tree to represent the income status of all dealers.
+
 The key is hashed from Address, $\mathrm{A}$, Chain Id, $\mathrm{C}$, Token Address, $\mathrm{T_{A}}$:
 $$
 \mathrm{KEY}(\mathrm{A}) = \mathrm{HASH}(\mathrm{A},\mathrm{C}, \mathrm{T_{A}})
@@ -286,11 +308,11 @@ The submitter finally update state of the balance of all dealers to the Fee Mana
 
 After submitter submits the update status, it will be reserved for one hour to time as an open challenge time. During this time period, anyone can challenge the submitter.
 
-### Phase 1.
+### Phase 1: Challenge initiation
 
 The Challenger initiates the challenge process from the Fee Manager contract and pledges a certain margin, at which point the Submitter's margin is also locked and needs to respond to the challenge process
 
-### Phase 2.
+### Phase 2: Bisection on Blocks
 
 Submitter submits the middle block number and status. The $\mathrm{Pair_{m_1}}$ can be verified by merkel proof.
 \begin{align*} 
@@ -308,7 +330,7 @@ Challenger needs to respond to $\mathrm{Pair_{m_1}}$. Now there are two cases:
 
 Submitter and Challenger will finally $\mathrm{Pair_f}$ at most $\lceil log_{2}^{e-s} \rceil$ rounds.
 
-### Phase 3.
+### Phase 3: Two-steps Proof
 
 At this time, the Submitter needs to prove the integrity of the $\mathrm{BT_{(f,m)}}$, as well as the proof of the continuous existence of the Pair, $\mathcal{K}_{z2}$ is the proving key of the circuit:
 \begin{align*} 
@@ -343,7 +365,6 @@ The proof of $\dot{T_l}$ should be verified in a specific time, $\mathcal{K}_{v3
 \end{gathered}
 \end{align*}
 
-# SECURITY MODEL
 
 # FUTURE IMPROVEMENTS
 
