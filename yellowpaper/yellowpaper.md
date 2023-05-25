@@ -1,11 +1,12 @@
 ---
-title: 'Orbiter: A Secure, Fast, Low Gas Decentralized Cross Rollup Bridge Protocol'
+title: 'Orbiter Cross Rollup Protocol: Optimistic For The Obedient Majority And Severe Arbitration For Malicious Minority'
 author: Orbiter Finance
 fontsize: 9pt
 geometry: margin=1.5cm
 date: \textit{Pre-release, \today}
 abstract: |
-	In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2. consolidating the security through ZK-SNAKRS.
+	In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2, while cost-effectively monitoring malicious behavior through zero-knowledge proofs.The protocol assumes that most of the character behaviors are not evil, and handle them in an optimistic way, so as to ensure the timeliness of cross-chain events, but at the same time provide a fast and convenient way to monitor evil events, and the security inherits from Ethereum Layer1.
+urlcolor: cyan
 urlcolor: cyan
 bibliography: yellowpaper.bib
 classoption:
@@ -96,7 +97,6 @@ the maker who response for the user's requirement, the following is its correspo
 - **Transfer Amount Range**: formally $\mathrm{M_{min}}$, $\mathrm{M_{max}}$.
 
 It can be formally defined as :
-
 \begin{align*} 
 \begin{gathered}
     \dot{M} \equiv M(\mathrm{M_{A}},\mathrm{M_{min}},\mathrm{M_{max}},\mathrm{REPAYTIME},\mathcal{C_{M}}, \mathcal{T_{M}} ) \ \ \land \\
@@ -155,15 +155,15 @@ Orbiter protocol aims to solve the cross-rollup problems instead of the cross-ch
 **SPV.** Simplified Payment Verification, firstly proposed in the BitCoin's whitepaper[@nakamoto2008bitcoin]. It allows a transaction recipient to prove that the sender has control of the source funds of the payment they are offering without downloading the full Blockchain, by utilising the properties of Merkle proofs[@bitcoinwikikspv].
 
 **Data Availability.** Rollup solutions provide a scalable framework for transaction processing off-chain, while data availability mechanisms ensure that the necessary data for verifying and auditing those transactions is accessible and reliably stored. Together, they enable efficient and secure scaling of blockchain networks by offloading transaction processing while maintaining data integrity and transparency.
-
-**zk-SNARKS.** Zero-Knowledge Succinct Non-Interactive Argument of Knowledge, which is widely used in the blockchain community for its features of privacy and scaling. We currently only talk about the latter.It consists of the following cryptographic primitives:
+                 
+**ZK-SNARKS.** Zero-Knowledge Succinct Non-Interactive Argument of Knowledge, which is widely used in the blockchain community for its features of privacy and scaling. We currently only talk about the latter.It consists of the following cryptographic primitives:
 
 - $\mathrm{Setup}(1^{\lambda}) \rightarrow \mathrm{Params}$. Given the security paramater $\lambda$, the mapping $e:\mathrm{G_1} \times \mathrm{G_2} \rightarrow \mathrm{G_T}$ is a nondegenerate bilinear pairing. $\mathrm{G_1}, \mathrm{G_2}$ are cyclic groups in prime order $p$, and their generators are $\mathrm{g_1}, \mathrm{g_2}$ respectively, $\mathrm{Params} = (p, \mathrm{G_1}, \mathrm{G_2}, \mathrm{G_T}, \mathrm{g_1}, \mathrm{g_2}, e)$.
 - $\mathrm{KeyGen}(\mathrm{Params}, \mathrm{C}) \rightarrow (\mathcal{K}_p, \mathcal{K}_v)$. Given the arithmetic circuit $\mathrm{C}$, convert $\mathrm{C}$ into a polynomial relationship $\mathrm{R}_c$, and then generate the proving key $\mathrm{K}_p$ and verification key $\mathrm{K}_v$.
 - $\mathrm{ProofComputation}(\mathrm{K}_p, x, w) \rightarrow \pi$. Given the proving key $\mathrm{K}_p$, the public commitment $x$, and the secret witness $w$, generate a zk proof $\pi$ about $x$ and $w$ through the circuit $\mathrm{C}$.
 - $\mathrm{Verification}(\mathrm{K}_v, x, \pi) \rightarrow \mathrm{rlt}$. Given the verification key $\mathrm{K}_v$, public commitment $x$, and zk proof $\pi$, output binary bit $\mathrm{rlt}$; $\mathrm{rlt} = 1$ when the proof is legitimate; otherwise $\mathrm{rlt} = 0$.
 
-**Basic Concept**. There are two types of rollups: optimistic rollups and zk-rollups. Their implementations are quite different, which also leads to their spv implementations are also very different[@spv_on_eth_l2].
+**Basic Concept**. There are two types of rollups: optimistic rollups and zk-rollups. Their implementations are quite different, which also leads to their spv implementations are also very different[@spv_on_eth_l2]. So we will not go into the details of each Rollup's SPV implementation here, but will use a set of proof primitives to generically represent our SPV components.
 
 
 Use ZK-SNARK cryptography technology to reduce the gas consumed by the proof of transaction validity
@@ -233,7 +233,7 @@ The final adjudication can be formalized as:
     \right.
 \end{equation} -->
 
-# DEALER FEE
+# Decentralized incentive frontend
 
 In many decentralized projects, when some front-end projects are subject to censorship and offline, resulting in users unable to directly use the decentralized product.
 
@@ -381,7 +381,14 @@ The proof of $\dot{T_l}$ should be verified in a specific time, $\mathcal{K}_{v3
 # FUTURE IMPROVEMENTS
 ## Recursive ZKP
 
-Recursive zero-knowledge proofs are still new cryptographic primitives relevant to the Orbiter blockchain use case. As some ZKP use cases as mentioned in some previous section.
+Recursive zero-knowledge proofs are still new cryptographic primitives relevant to the Orbiter blockchain use case. As some ZKP use cases as mentioned in some previous section. Currently, computing a ZK proof of a complete transaction is still a very time-consuming task, so it will be a time-consuming linear growth challenge to calculate a batch of transaction lists mapped to a specific block. 
+
+However, we can parallelize the proof of multiple transactions through the technique of recursive proof.
+
+
+At the same time, we will use some zk algorithms with higher verification efficiency as the last step of zkp verification on the chain, such as groth16[@cryptoeprint:2016/260], fflonk[@cryptoeprint:2021/1167], etc.
+
+
 
 ## EIP-4844
 
