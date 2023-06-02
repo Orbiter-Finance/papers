@@ -50,6 +50,7 @@ Orbiter Protocol's design follows the flowing principles:
 - **Secure.** The priority of security is the highest, mainly around the security of funds involved in the roles in the protocol layer.
 - **Decentralized.** The assets pledged by the role will not be seized by any role in the agreement, and any evil behavior will be punished by the mechanism of the protocol layer.
 - **Efficiency Sensitive.** Efficiency of capital utilization and gas fees for users in the process of cross-chain execution.
+- **OmniRollup Compatible.** Assets' interoperability across rollup will be supported in EVM supported rollup and non-EVM rollup networks.
 
 # OVERVIEW
 
@@ -400,6 +401,6 @@ At the same time, we will use some zk algorithms with higher verification effici
 
 
 
-## EIP-4844
+<!-- ## EIP-4844 -->
 
 # REFERENCES\
