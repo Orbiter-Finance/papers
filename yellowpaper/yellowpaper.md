@@ -5,7 +5,7 @@ fontsize: 9pt
 geometry: margin=1.5cm
 date: \textit{Pre-release, \today}
 abstract: |
-	In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2, while cost-effectively monitoring malicious behavior through zero-knowledge proofs.The protocol assumes that most of the character behaviors are not evil, and handle them in an optimistic way, so as to ensure the timeliness of cross-chain events, but at the same time provide a fast and convenient way to monitor evil events, and the security inherits from Ethereum Layer1.
+	In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2, while cost-effectively monitoring malicious behavior through zero-knowledge proofs.The protocol assumes that most of the character behaviors are not evil, and handle them in an optimistic way, so as to ensure the timeliness of cross-chain events, but at the same time provide a fast and convenient way to monitor evil events, and the security inherits from Ethereum Layer1. The operations on destination side are compatible both EVM and non-EVM rollup environments.
 urlcolor: cyan
 urlcolor: cyan
 bibliography: yellowpaper.bib
@@ -30,13 +30,19 @@ header-includes:
 
 # PREVIOUS WORK
 
-At present, there are several different cross-chain technical solutions and projects.
+At present, there are several different cross-chain technical solutions and projects.We can divide them into two categories, one is cross rollups bridge and the other is cross public chains bridge.
 
-Vitalik Buterin had proposed a easy decentralizd cross-layer-2 bridge[@vbeasyl2brdige], which described a very concise cross-chain bridge architecture based on rollup environment and largely inspired the design of the orbiter bridge.
+The sercurity fundamentals between cross rollups and cross chains are totally different. Assets transferred between rollups, due to the technical characteristics of Rollups, can essentially be considered to remain on the Ethereum mainnet rather than other public chains. Whereas, assets transferred between public chains will bear the short board effect. If the weakest chain suffers from  51% attack, the asset's security will also be weakened[@rollupbridgesecurity].
 
-Hop[@hopwhitepaper] is a previous cross rollup bridge project, it utilizes bridging mechanisms to enable the transfer of assets between different blockchain networks and establishes bridges that lock tokens on one chain and mint wrapped tokens on the destination chain, ensuring interoperability across chains through Automated Market Makers.
+Vitalik Buterin had proposed a **Easy Decentralizd Cross-layer-2 Bridge**[@vbeasyl2brdige], which described a very concise cross-chain bridge architecture based on rollup environment and largely inspired the design of the orbiter bridge.
 
-Nomad[@nomadofficialwebsite] is a previous optimistic interoperability cross-chain protocol, it uses optimistic proofs as a prototype, sending some data proofs, accepting them as valid after a timer elapses, and introducing challengers to submit fraud proofs. Nomad spans multiple chains. The sending chain is the source of messages, and messages are committed into the merkle tree. The root of this tree is notarized by the updater, and is relayed to the receiving chain through the relayer in the update. Updates are signed by the updater. They commit to the previous root and a new root. Any chain can maintain a replica contract that contains knowledge of the updater and the current root. Signed updates are held by replicas and accepted after a timeout.
+**LayerZero**[@zarick2021layerzero] is a cross chain protocol, its communication's validation requires two independent components, the Oracle and Relayer. The Oracle provides the block header, and the Relayer provides the proof of specific transactions.
+
+**StarGate**[@stargatewhitepaper], a cross chain bridge which is built on the LayerZero protocol. Its $\Delta$ Algorithm enhances the connectivity of asset liquidity between different chains.
+
+**Hop**[@hopwhitepaper] is a previous cross rollup bridge project, it utilizes bridging mechanisms to enable the transfer of assets between different blockchain networks and establishes bridges that lock tokens on one chain and mint wrapped tokens on the destination chain, ensuring interoperability across chains through Automated Market Makers.
+
+**Nomad**[@nomadofficialwebsite] is a previous optimistic interoperability cross-chain protocol, it uses optimistic proofs as a prototype, sending some data proofs, accepting them as valid after a timer elapses, and introducing challengers to submit fraud proofs. Nomad spans multiple chains. The sending chain is the source of messages, and messages are committed into the merkle tree. The root of this tree is notarized by the updater, and is relayed to the receiving chain through the relayer in the update. Updates are signed by the updater. They commit to the previous root and a new root. Any chain can maintain a replica contract that contains knowledge of the updater and the current root. Signed updates are held by replicas and accepted after a timeout.
 
 # DESIGN PRINCINPLES
 Orbiter Protocol's design follows the flowing principles:
@@ -54,7 +60,7 @@ Orbiter aims to build a secure, decentralized and efficiency sensitive cross rol
 - After receiving the user's cross-chain intention, the cross-chain market maker needs to respond to the intention, that is, perform the corresponding operation on the target chain.
 - Whether a user or a cross-chain market maker sends a transaction that does not follow the protocol, that is, a malicious behavior, both the challenger and the challenged can prove the legitimacy of their own transactions in an efficient and low-cost way through zero-knowledge proof.
 
-![Cross Rollup Transaction Flow](diagrams/cross-rollup-flow.png)
+![Optimistic Cross Rollup Transaction Flow](diagrams/cross-rollup-flow.png)
 
 # THE ORBITER PROTOCOL
 
@@ -233,6 +239,8 @@ The final adjudication can be formalized as:
     \right.
 \end{equation} -->
 
+![Arbitration Flow](diagrams/cross-tx-arbitration.png)
+
 # Decentralized incentive frontend
 
 In many decentralized projects, when some front-end projects are subject to censorship and offline, resulting in users unable to directly use the decentralized product.
@@ -315,6 +323,8 @@ _State Transition Tree Root_, formally $\mathrm{STR}$, $s$, $e$ represents Start
 \end{align*}
 
 The submitter finally update state of the balance of all dealers to the Fee Manager Contract.
+
+![Submitter Epoch](diagrams/submitter-epoch.png)
 
 ## Challenge Protocol
 
