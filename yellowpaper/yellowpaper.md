@@ -5,7 +5,7 @@ fontsize: 9pt
 geometry: margin=1.5cm
 date: \textit{Pre-release, \today}
 abstract: |
-	In this paper, we propose a optimistic interoperability , secure, low-gas, low-latency decentralized architectures for transfer of standard assets between rollup Layer2, while cost-effectively monitoring malicious behavior through zero-knowledge proofs.The protocol assumes that most of the character behaviors are not evil, and handle them in an optimistic way, so as to ensure the timeliness of cross-chain events, but at the same time provide a fast and convenient way to monitor evil events, and the security inherits from Ethereum Layer1. The operations on destination side are compatible both EVM and non-EVM rollup environments.
+    This paper presents a novel approach to achieve optimistic interoperability between rollups in Layer2s, enabling secure, low-gas, and low-latency transfer of standard assets. Our decentralized architectures prioritize efficiency while effectively monitoring malicious behavior using zero-knowledge proofs. The protocol assumes that the majority of actors are not faulty and optimistically handles cross-rollup events to ensure timely execution. Additionally, it offers a fast and convenient method to detect and monitor malicious events while benefiting from the security inherited from Ethereum Layer1. The operations on the destination side are compatible with both EVM and non-EVM rollup environments.
 urlcolor: cyan
 urlcolor: cyan
 bibliography: yellowpaper.bib
@@ -30,36 +30,36 @@ header-includes:
 
 # PREVIOUS WORK
 
-At present, there are several different cross-chain technical solutions and projects.We can divide them into two categories, one is cross rollups bridge and the other is cross public chains bridge.
+At present, there are several different cross-chain technical solutions and projects. We can divide them into two categories, one is cross rollups bridge and the other is cross public chains bridge.
 
-The sercurity fundamentals between cross rollups and cross chains are totally different. Assets transferred between rollups, due to the technical characteristics of Rollups, can essentially be considered to remain on the Ethereum mainnet rather than other public chains. Whereas, assets transferred between public chains will bear the short board effect. If the weakest chain suffers from  51% attack, the asset's security will also be weakened[@rollupbridgesecurity].
+The security fundamentals between cross rollups and cross chains are totally different. Assets transferred between rollups, due to the technical characteristics of Rollups, can essentially be considered to remain on the Ethereum mainnet rather than other public chains. Whereas assets transferred between public chains will bear The Bucket Effect. If the weakest chain suffers from  51% attack, the asset's security will also be weakened [@rollupbridgesecurity].
 
-Vitalik Buterin had proposed a **Easy Decentralizd Cross-layer-2 Bridge**[@vbeasyl2brdige], which described a very concise cross-chain bridge architecture based on rollup environment and largely inspired the design of the orbiter bridge.
+Vitalik Buterin introduced an idea for **Easy Decentralizd Cross-layer-2 Bridge** [@vbeasyl2brdige], outlining a compact architecture for a cross-rollup bridge within the rollup environment. This proposal served as a significant inspiration for the design of Orbiter bridge.
 
-**LayerZero**[@zarick2021layerzero] is a cross chain protocol, its communication's validation requires two independent components, the Oracle and Relayer. The Oracle provides the block header, and the Relayer provides the proof of specific transactions.
+**LayerZero** [@zarick2021layerzero] is a cross chain protocol, its communication's validation requires two independent components, the Oracle and Relayer. The Oracle provides the block header, and the Relayer provides the proof of specific transactions.
 
-**StarGate**[@stargatewhitepaper], a cross chain bridge which is built on the LayerZero protocol. Its $\Delta$ Algorithm enhances the connectivity of asset liquidity between different chains.
+**StarGate** [@stargatewhitepaper], a cross chain bridge which is built on the LayerZero protocol. Its $\Delta$ Algorithm enhances the connectivity of asset liquidity between different chains.
 
-**Hop**[@hopwhitepaper] is a previous cross rollup bridge project, it utilizes bridging mechanisms to enable the transfer of assets between different blockchain networks and establishes bridges that lock tokens on one chain and mint wrapped tokens on the destination chain, ensuring interoperability across chains through Automated Market Makers.
+**Hop** [@hopwhitepaper] is a previous cross rollup bridge project, it utilizes bridging mechanisms to enable the transfer of assets between different blockchain networks and establishes bridges that lock tokens on one chain and mint wrapped tokens on the destination chain, ensuring interoperability across chains through Automated Market Makers.
 
-**Nomad**[@nomadofficialwebsite] is a previous optimistic interoperability cross-chain protocol, it uses optimistic proofs as a prototype, sending some data proofs, accepting them as valid after a timer elapses, and introducing challengers to submit fraud proofs. Nomad spans multiple chains. The sending chain is the source of messages, and messages are committed into the merkle tree. The root of this tree is notarized by the updater, and is relayed to the receiving chain through the relayer in the update. Updates are signed by the updater. They commit to the previous root and a new root. Any chain can maintain a replica contract that contains knowledge of the updater and the current root. Signed updates are held by replicas and accepted after a timeout.
+**Nomad** [@nomadofficialwebsite] is a previous optimistic interoperability cross-chain protocol that is based on optimistic proofs. It sends data proofs and accepts them as valid after a certain timer expires, while introducing challengers to submit fraud proofs. Nomad spans multiple chains. The sending chain is the source of messages, and messages are committed into the merkle tree. The root of this tree is notarized by the updater, and is relayed to the receiving chain through the relayer in the update. Updates are signed by the updater. They commit to the previous root and a new root. Any chain can maintain a replica contract that contains knowledge of the updater and the current root. Signed updates are held by replicas and accepted after a timeout.
 
 # DESIGN PRINCINPLES
 Orbiter Protocol's design follows the flowing principles:
 
-- **Secure.** The priority of security is the highest, mainly around the security of funds involved in the roles in the protocol layer.
-- **Decentralized.** The assets pledged by the role will not be seized by any role in the agreement, and any evil behavior will be punished by the mechanism of the protocol layer.
-- **Efficiency Sensitive.** Efficiency of capital utilization and gas fees for users in the process of cross-chain execution.
+- **Secure.** The priority of security is the highest, primarily focusing on the asset security involved in the protocol layer.
+- **Decentralized.** The pledged assets will not be accessed by any role in the agreement, and any malicious behavior will be punished by the mechanism of the protocol layer.
+- **Efficiency Sensitive.** High efficiency of fund utilization and gas fees for users during Cross-Rollup execution processes.
 - **OmniRollup Compatible.** Assets' interoperability across rollup will be supported in EVM supported rollup and non-EVM rollup networks.
 
 # OVERVIEW
 
 Orbiter aims to build a secure, decentralized and efficiency sensitive cross rollup bridge on Ethereum ecology, and raises the interoperability of the standard assets among these rollup environments. These requirements will dictate the following properties:
 
-- Every transaction that the user interacts with the protocol must be a simple transfer transaction, ETH transaction or ERC20 transfer transaction, rather than interacting with a certain contract of the protocol. The user's cross-chain intention is reflected in the series of numbers at the end of the transfer amount. The rules and constraints of this series of numbers are controlled by the protocol layer, which is Orbiter's smart contract.
+- Every transaction that the user interacts with the protocol must be a simple transfer transaction, ETH transaction or ERC20 transaction, rather than interacting with a certain contract of the protocol. The user's Cross-Rollup intention is reflected in the series of numbers at the end of the transfer amount. The rules and constraints of this series of numbers are controlled by the protocol layer, which is Orbiter's smart contract.
 
-- After receiving the user's cross-chain intention, the cross-chain market maker needs to respond to the intention, that is, perform the corresponding operation on the target chain.
-- Whether a user or a cross-chain market maker sends a transaction that does not follow the protocol, that is, a malicious behavior, both the challenger and the challenged can prove the legitimacy of their own transactions in an efficient and low-cost way through zero-knowledge proof.
+- After receiving the user's Cross-Rollup intention, the Cross-Rollup market maker needs to respond to the intention, that is, perform the corresponding operation on the target chain.
+- Both users and Cross-Rollup market makers, in the case of sending non-compliant transactions that involve malicious behavior, can prove the legitimacy of their transactions through efficient and low-cost zero-knowledge proofs.
 
 ![Optimistic Cross Rollup Transaction Flow](diagrams/cross-rollup-flow.png)
 
@@ -67,22 +67,22 @@ Orbiter aims to build a secure, decentralized and efficiency sensitive cross rol
 
 ## Role Defination 
 
-- **User.** User who uses the cross-environment interoperability systems.
-- **Maker.** Provider who provide the cross-rollup service.
-- **Dealer.** Getting incentived by providing a decentralized frontend.
-- **Submitter.** The role used to submit the root of the Dealer revenue tree.
-- **Orbiter DAO.** Is to provide a transparent and dencentrailzed framework for managing and operating the project.
+- **User.** Users who utilize the cross-environment interoperability systems.
+- **Maker.** Providers who offer Cross-Rollup services.
+- **Dealer.** Receives incentives by providing decentralized frontends.
+- **Submitter.** Responsible for submitting the root of dealer’s revenue tree.
+- **Orbiter DAO.** A transparent and decentralized framework designed for managing and operating projects.
 
 ## Orbiter Transactions
 
-The user sends a specific amount of ERC20 or native token to the maker, the amount of witch corresponds to the following parts
+The user sends a specific amount of ERC20 or native token to the maker, the amount of which corresponds to the following parts:  
 
-- **Transfer Amounts**: the amount that the user would have needed to cross chain; formally $\mathrm{D_{ta}}$.
-- **Trading Fee**: fees paid to the platform and Maker that is charged as a percentage of the transfer amount; formally $\mathrm{D_{tf}}$.
-- **Witholding Fee**: the fee prepaid to Maker to pay the gas fee for the destination network transfer; formally $\mathrm{D_{wf}}$.
-- **Destination Chain ID**: the target rollup network sepcified by the user,$\mathrm{D_{dci}}$, which is maintained uniformly and globally on L1 by the orbiter protocol, $\mathcal{C}$.
+- **Transfer Amounts**: The amount that the user would have needed to cross chain; formally $\mathrm{D_{ta}}$.
+- **Trading Fee**: Fees paid to the platform and Maker that is charged as a percentage of the transfer amount; formally $\mathrm{D_{tf}}$.
+- **Witholding Fee**: The fee prepaid to Maker to pay the gas fee for the destination network transfer; formally $\mathrm{D_{wf}}$.
+- **Destination Chain ID**: The destination rollup network sepcified by the user,$\mathrm{D_{dci}}$, which is maintained uniformly and globally on L1 by the orbiter protocol, $\mathcal{C}$.
 - **Dealer ID**: formally $\mathrm{D_{di}}$.
-- **EBC ID** : formally $\mathrm{D_{ei}}$.
+- **EBC ID**: formally $\mathrm{D_{ei}}$.
 
 The source transaction execution time can be verified in source block chain, $\mathrm{TIMESTAMP_{S}}$.
 
@@ -95,7 +95,7 @@ The source transaction execution time can be verified in source block chain, $\m
 \end{gathered}
 \end{align*}
 
-the maker who response for the user's requirement, the following is its corresponding constraints
+The corresponding constrains of the maker responses for the user are as follows:       
 
 - **Maker Address**: formally $\mathrm{M_{A}}$. for all of the address of the selected maker, formally $\mathcal{M_{A}}$.
 - **Supporting Chain List**: formally $\mathcal{C_{M}}$.
@@ -103,7 +103,8 @@ the maker who response for the user's requirement, the following is its correspo
 - **Repay Time**: formally $\mathrm{REPAYTIME}$.
 - **Transfer Amount Range**: formally $\mathrm{M_{min}}$, $\mathrm{M_{max}}$.
 
-It can be formally defined as :
+It can be formally defined as:      
+
 \begin{align*} 
 \begin{gathered}
     \dot{M} \equiv M(\mathrm{M_{A}},\mathrm{M_{min}},\mathrm{M_{max}},\mathrm{REPAYTIME},\mathcal{C_{M}}, \mathcal{T_{M}} ) \ \ \land \\
@@ -117,7 +118,7 @@ It can be formally defined as :
 
 Destination transaction, when Maker perceives that the user sends a transaction to the maker address according to the agreed protocol, it needs to transfer a specific amount to the user's address in the target network within the specified time range, $\mathrm{REPAYTIME}$.
 
-It can be formally defined as 
+It can be formally defined as:    
 
 \begin{align*} 
 \begin{gathered}
@@ -137,31 +138,33 @@ $$ \tag{1} \dot{T} \equiv (\dot{T}_{S}, \dot{T}_{D}, \dot{M}) \equiv  (T_{S}, T_
 
 ## CORE CONTRACT 
 
-All smart contracts below are deployed on the Ethereum mainnet:
+All smart contracts below are deployed on the Ethereum mainnet:    
 
 - **MDC**: Maker Deposit Contract, keeping Makers's margin, handling the arbitration for user.
 
 - **EBC**: Event Binding Contract, storing the margin rules and Makers' charging standards.
 
-- **ZK-SPV**: Zero Knowledge Simple Payment Verification. Prove the existence and rationality of Orbiter cross-chain Tx through zero-knowledge proof technology. Existence means that both source transaction and target transaction can be proved on L1 that they actually happened on the corresponding L2, and rationality means It can prove the intention of the user of SrcTx, and the result of the maker’s payment in DstTx conforms to specific rules.
+- **ZK-SPV**: Zero Knowledge Simple Payment Verification. Prove the existence and rationality of Orbiter cross-chain Tx through zero-knowledge proof technology. Existence means that both source transaction and target transaction can be proved on L1 that they actually happened on the corresponding L2, and rationality refers to the ability to prove the user's intention in SrcTx and ensure that the results of the payment made by the maker in DstTx comply with specific rules.
+
 - **FeeManager**: Maintain the information of all Dealers, manage and update the benefits that Dealers get from Makers, and ensure the correctness of revenue status updates through the arbitration penalty mechanism.
+
 - **DaoManager**: Maintain some global parameters of the protocol layer.
 
-## Off Chain Compoment
+## Off Chain Component
 
-- **Maker Client**: Responsible for monitoring and supervising cross-chain behavior on the chain to ensure timely response to users' cross-chain transfer transactions.
+- **Maker Client**: Responsible for monitoring and supervising Cross-Rollup behavior on the chain to ensure timely response to users' Cross-Rollup transfer transactions.
 
-- **Submitter Client**: Responsible for maintaining the information on the distribution of Dealer's revenue, and updating the global information to the chain in a timely manner.
+- **Submitter Client**: In charge of maintaining the information regarding the allocation of Dealer revenue and ensuring timely updates of the collective information to the chain.
 
 ## SECURITY MODEL
 
-Orbiter protocol aims to solve the cross-rollup problems instead of the cross-chain issues. The cross-chain project's primary goal is to ensure the security of transactions between two unique chains and avoid the 51% attack. But the cross-rollup project uses the same Ethereum data layer with each rollup which can naturally prevent the 51% attack. Based on this, Orbiter comes up with a cross-rollup mechanism that can inherit the security of Ethereum L2[@rollupbridgesecurity].
+Orbiter protocol aims to solve the cross-rollup problems instead of the cross-chain issues. The cross-chain project's primary goal is to ensure the security of transactions between two unique chains and avoid the 51% attack. But the cross-rollup project uses the same Ethereum data layer with each rollup which can naturally prevent the 51% attack. Based on this, Orbiter comes up with a cross-rollup mechanism that can inherit the security of Ethereum L2 [@rollupbridgesecurity].
 
 # ZK-SPV
 
-**SPV.** Simplified Payment Verification, firstly proposed in the BitCoin's whitepaper[@nakamoto2008bitcoin]. It allows a transaction recipient to prove that the sender has control of the source funds of the payment they are offering without downloading the full Blockchain, by utilising the properties of Merkle proofs[@bitcoinwikikspv].
+**SPV.** Simplified Payment Verification, firstly proposed in the BitCoin's whitepaper [@nakamoto2008bitcoin]. It allows a transaction recipient to prove that the sender has control of the source funds of the payment they are offering without downloading the full Blockchain, by utilising the properties of Merkle proofs [@bitcoinwikikspv].
 
-**Data Availability.** Rollup solutions provide a scalable framework for transaction processing off-chain, while data availability mechanisms ensure that the necessary data for verifying and auditing those transactions is accessible and reliably stored. Together, they enable efficient and secure scaling of blockchain networks by offloading transaction processing while maintaining data integrity and transparency.
+**Data Availability.** Rollup solutions provide a scalable framework for transaction processing off-chain, while data availability mechanisms ensure that the necessary data for verifying and auditing those transactions is accessible and reliably stored. They enable efficient and secure scaling of blockchain networks by offloading transaction processing while maintaining data integrity and transparency.
                  
 **ZK-SNARKS.** Zero-Knowledge Succinct Non-Interactive Argument of Knowledge, which is widely used in the blockchain community for its features of privacy and scaling. We currently only talk about the latter.It consists of the following cryptographic primitives:
 
@@ -170,14 +173,11 @@ Orbiter protocol aims to solve the cross-rollup problems instead of the cross-ch
 - $\mathrm{ProofComputation}(\mathrm{K}_p, x, w) \rightarrow \pi$. Given the proving key $\mathrm{K}_p$, the public commitment $x$, and the secret witness $w$, generate a zk proof $\pi$ about $x$ and $w$ through the circuit $\mathrm{C}$.
 - $\mathrm{Verification}(\mathrm{K}_v, x, \pi) \rightarrow \mathrm{rlt}$. Given the verification key $\mathrm{K}_v$, public commitment $x$, and zk proof $\pi$, output binary bit $\mathrm{rlt}$; $\mathrm{rlt} = 1$ when the proof is legitimate; otherwise $\mathrm{rlt} = 0$.
 
-**Basic Concept**. There are two types of rollups: optimistic rollups and zk-rollups. Their implementations are quite different, which also leads to their spv implementations are also very different[@spv_on_eth_l2]. So we will not go into the details of each Rollup's SPV implementation here, but will use a set of proof primitives to generically represent our SPV components.
-
-
-Use ZK-SNARK cryptography technology to reduce the gas consumed by the proof of transaction validity
+**Basic Concept**. There are two types of rollups: optimistic rollups and zk-rollups. Their implementations are quite different, Which also leads to the difference of the respective SPV implementations [@spv_on_eth_l2]. The specifics of each Rollup's SPV implementation will not be discussed in this context. Instead, we will utilize a standardized set of proof primitives to universally represent our SPV components. Reducing the gas consumption of transaction validity proofs by adopting ZK-SNARK cryptographic technology.
 
 ## Prove Primitives
 
-The challenger should provide the ZK Proof of the source transaction, for the exsitence of that.
+The challenger should provide the ZK Proof of the source transaction, for the Exsitence of that.
 
 **Challenge Task**. The challenger should create the challenge task through smart contract firstly , locking the margin of the maker which is challenged , the creating time is $t_{0}$, the challenger should deposit some amount of margin, formally $\mathcal{M}_{C}$ formally
 
@@ -207,13 +207,13 @@ $$
 \dot{\mathrm{SPV}}(\mathrm{I_{a}}) \equiv \mathrm{SPV}((p,v)^{z1}(\mathrm{I_{a}}))
 $$
 
-If the maker has reponsed to the user $a$'s intention, $\mathrm{R_{a}}$, then the target transaction's proof computation can be formalized as:
+If the maker has responded to the user $a$'s intention, $\mathrm{R_{a}}$, then the target transaction's proof computation can be formalized as:
 \begin{align*} 
 \begin{gathered}
     p^{z1}(\mathrm{R_{a}}) \equiv \hat{C}(T_{D}, \mathrm{TIMESTAMP_{D}}, \mathrm{D_{ta}}, \mathrm{M_{A}}, \dot{M}, \mathcal{K}_{p1})
 \end{gathered}
 \end{align*}
-The corresponded verification is, it's time is $t_{2}$:
+The corresponded verification is, the time is $t_{2}$:
 \begin{align*} 
 \begin{gathered}
     v^{z1}(\mathrm{R_{a}}) \equiv (\hat{V}(p^{z1}(\mathrm{R_{a}}),a,\mathcal{K}_{v}), t_{2})
@@ -244,11 +244,11 @@ The final adjudication can be formalized as:
 
 # Decentralized incentive frontend
 
-In many decentralized projects, when some front-end projects are subject to censorship and offline, resulting in users unable to directly use the decentralized product.
+In many decentralized projects, when certain front-end applications undergo scrutiny and are taken offline, it results in users being unable to directly use the decentralized products.
 
-**Motivation.** We designed a set of incentive mechanisms to allow third-party organizations to deploy front-ends that support the Orbiter cross-chain bridge protocol.
+**Motivation.** We designed a set of incentive mechanisms to allow third-party organizations to deploy front-ends that support the Orbiter Cross-Rollup bridge protocol.
 
-Dealer use the dealer id to identify itself, and register its fee rate to the fee manager contract.
+Dealers use the dealer id to identify itself, and register its fee rate to the fee manager contract.
 
 ## Submitter Consensus Election
 
@@ -256,16 +256,16 @@ Nodes need to pledge part of the funds first to meet the basic requirements of b
 
 **Safety.** The property of the protocol that ensuring that the calculation update of Dealer's income and the pre-stored handling fee of Maker are deducted correctly, and can be accurately associated with each cross-chain transaction.
 
-**Liveness.** The property of the protocol that guaranteing the timeliness of updating the income status, allowing dealers and makers to withdraw and deposit at any time.
+**Liveness.** The property of the protocol that guaranteeing the timeliness of updating the income status, allowing dealers and makers to withdraw and deposit at any time.
 
 
 ![Submitter Node Election](diagrams/submitter-node-election.png)
 
-The challenge of the submitter node election process is not as severe as that of the POS public chain. During the election process, there is no need to maintain more than $2/3$ of the honest nodes like the PBFT[@castro1999practical] election consensus mechanism. As long as there is one honest node, it can remain active and do evil Behaviors will be reported by other nodes with incentives and let them withdraw from the committee.
+The challenge of the submitter node election process is not as severe as that of the POS public chain. During the election process, there is no need to maintain more than $2/3$ of the honest nodes like the PBFT [@castro1999practical] election consensus mechanism. As long as there is one honest node, it can remain active and do malicious behaviors will be reported by other nodes with incentives and let them withdraw from the committee.
 
 ## Transaction Mapping
 
-We accurately map cross-chain transactions to L1 blocks through a set of rules, which must satisfies sequentially unique property.
+We accurately map cross-chain transactions to L1 blocks through a set of rules, which must satisfy sequentially unique property.
 The withdraw time of source chain and target chain is $\mathrm{WT_{S}}$, $\mathrm{WT_{D}}$, the mapping block time can be defined as:
 \begin{align*} 
 \begin{gathered}
@@ -274,12 +274,12 @@ The withdraw time of source chain and target chain is $\mathrm{WT_{S}}$, $\mathr
 \end{gathered}
 \end{align*}
 
-All transactions meeting this condition are guaranteed to be finalized. The Block of L1 with its block number $n$, noted as $\mathrm{B}$, its correspoding block number, $\mathrm{N_{block}}$, and there is a timestamp of this block, noted as $\mathrm{TIMESTAMP_{B}}$, there exesits a constraint
+All transactions meeting this condition are guaranteed to be finalized. The Block of L1 with its block number $n$, noted as $\mathrm{B}$, its corresponding block number, $\mathrm{N_{block}}$, and there is a timestamp of this block, noted as $\mathrm{TIMESTAMP_{B}}$, there exesits a constraint
 $$
 \mathrm{TIMESTAMP_{B_{n}}} \leq f(\dot{T}) < \mathrm{TIMESTAMP_{B_{n+1}}}
 $$
 
-Then several cross transaction can be mapped to a specific block on L1
+Then several cross transactions can be mapped to a specific block on L1
 $$
 \dot{\mathrm{BT}} \equiv \mathrm{BT_{(n,m)}} \equiv \{\dot{T_1},\dot{T_2},\ldots,\dot{T_m}\} \xrightarrow[]{map} \mathrm{B_n} 
 $$
@@ -329,15 +329,15 @@ The submitter finally update state of the balance of all dealers to the Fee Mana
 
 ## Challenge Protocol
 
-After submitter submits the update status, it will be reserved for one hour to time as an open challenge time. During this time period, anyone can challenge the submitter.
+Once the submitter submits the updated state, a one-hour timeframe is designated as a public challenge period. Within this duration, any individual has the opportunity to challenge the submitter.
 
-### Phase 1: Challenge initiation
+### Phase 1: Challenge Initiation
 
-The Challenger initiates the challenge process from the Fee Manager contract and pledges a certain margin, at which point the Submitter's margin is also locked and needs to respond to the challenge process
+The Challenger initiates the challenge process from Fee Manager contract and pledges a certain margin, at which point the Submitter's margin is also locked and needs to respond to the challenge process
 
 ### Phase 2: Bisection on Blocks
 
-Submitter submits the middle block number and status. The $\mathrm{Pair_{m_1}}$ can be verified by merkel proof.
+Submitter submits the middle block number and status. The $\mathrm{Pair_{m_1}}$ can be verified by Merkel proof.
 \begin{align*} 
 \begin{gathered}
     \mathrm{Pair_{m_1}} \equiv (\mathrm{B_{m_1}}, \mathrm{S_{m_1}})  \\ 
@@ -394,10 +394,9 @@ The proof of $\dot{T_l}$ should be verified in a specific time, $\mathcal{K}_{v3
 
 Recursive zero-knowledge proofs are still new cryptographic primitives relevant to the Orbiter blockchain use case. As some ZKP use cases as mentioned in some previous section. Currently, computing a ZK proof of a complete transaction is still a very time-consuming task, so it will be a time-consuming linear growth challenge to calculate a batch of transaction lists mapped to a specific block. 
 
-However, we can parallelize the proof of multiple transactions through the technique of recursive proof.
+However, we can parallelize the proof of multiple transactions through the technique of recursive proof.   
 
-
-At the same time, we will use some zk algorithms with higher verification efficiency as the last step of zkp verification on the chain, such as groth16[@cryptoeprint:2016/260], fflonk[@cryptoeprint:2021/1167], etc.
+At the same time, we will use some zk algorithms with higher verification efficiency as the last step of zkp verification on the chain, such as groth16 [@cryptoeprint:2016/260], fflonk [@cryptoeprint:2021/1167], etc.
 
 
 
