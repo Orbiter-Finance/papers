@@ -36,11 +36,11 @@ Founded in 2021, Orbiter Finance has grown in its fourth year of operation. In t
 
 # Recap Cross-Chain Bridge
 
-Most people know Orbiter Finance for its cross-chain services, mainly through our flagship product, Orbiter Bridge.  Cross-chain demand has always been a fundamental need in the blockchain sector, enabling users to transfer assets seamlessly between various blockchains, such as transferring assets from Bitcoin to Ethereum. Before 2021, achieving cross-chain transfers was very challenging, where centralized exchange (CEX) handled most of the work. While in this period, with many attempts to explore on-chain cross-chain technologies, Orbiter Finance first proposed the “Trust in Advance” concept to address the cross-chain challenge, a concept that has since proven crucial in the evolving market. We also proposed an arbitrary mechanism to maintain the security of the cross-chain service and prevent fraud and malicious activities. This innovation greatly improves cross-chain efficiency and security. For example, Optimism (OP) rollups must follow a 7-day challenge of fraud proving process for any cross-chain transaction. However, Orbiter Bridge shortens this transferring time to seconds. This performance improvement contributes to the prosperity of the multi-chain economy.  Over the last four years, the demand for cross-chain solutions has continued to grow, particularly after the release of EIP-4844, which dramatically decreased the transaction fees on Ethereum Layer 2 blockchains. A significant amount of funds is shifting from Layer 1 (L1) to Layer 2 (L2). Cross-Chain Bridge has never been more important. However, as active contributors to the crypto community, we are now considering the next step of Orbiter Finance.
+Most people know Orbiter Finance for its cross-chain services, mainly through our flagship product, Orbiter Bridge.  Cross-chain demand has always been a fundamental need in the blockchain sector, enabling users to transfer assets seamlessly between various blockchains, such as transferring assets from Bitcoin to Ethereum. Before 2021, achieving cross-chain transfers was very challenging, where centralized exchange (CEX) handled most of the work. While in this period, with many attempts to explore on-chain cross-chain technologies, Orbiter Finance first proposed the “Trust in Advance” concept to address the cross-chain challenge, a concept that has since proven crucial in the evolving market. We also proposed an arbitrary mechanism to maintain the security of the cross-chain service and prevent fraud and malicious activities. This innovation greatly improves cross-chain efficiency and security. For example, Optimism (OP) rollups must follow a 7-day challenge of fraud proving process for any cross-chain transaction. However, Orbiter Bridge shortens this transferring time to seconds. This performance improvement contributes to the prosperity of the multi-chain economy.  Over the last four years, the demand for cross-chain solutions has continued to grow, particularly after the release of EIP-4844 [@eip4844], which dramatically decreased the transaction fees on Ethereum Layer 2 blockchains. A significant amount of funds is shifting from Layer 1 (L1) to Layer 2 (L2). Cross-Chain Bridge has never been more important. However, as active contributors to the crypto community, we are now considering the next step of Orbiter Finance.
 
 ![Orbiter Bridge Activity](diagrams/orbiter-acrivicities.png){width=90% height=90%}
 
-To understand the future direction, we first revisit the release day of EIP-4844, a pivotal moment for the blockchain community and an essential milestone for Ethereum. Ethereum wants to achieve data sharding as its long-term goal, which would significantly improve the system’s scalability and performance, with EIP-4844 as a temporary solution even though this upgrade has released substantially the potential of Layer 2s for both OP roll and Zero-knowledge (ZK) rollups. The key idea is to implement the transaction format that would be used in sharding but not actually sharding those transactions. A direct consequence is that more funds are moving from L1 to L2, forming a Layer 2-centric ecosystem.
+To understand the future direction, we first revisit the release day of EIP-4844, a pivotal moment for the blockchain community and an essential milestone for Ethereum. Ethereum wants to achieve data sharding as its long-term goal, which would significantly improve the system’s scalability and performance, with EIP-4844 as a temporary solution even though this upgrade has released substantially the potential of Layer 2s for both OP roll and Zero-knowledge (ZK) rollups. The key idea is to implement the transaction format that would be used in sharding but not actually sharding those transactions. A direct consequence is that more funds are moving from L1 to L2, forming a Layer 2-centric ecosystem [@l2culture].
 
 In this new Layer 2-centric ecosystem, we captured 3 new demands:
 
@@ -74,13 +74,13 @@ The key features of Orbiter Network are:
 - **Lightweight:** ZKP usually requires a high requirement on system hardware configurations. High system requirements will reduce user participation and exacerbate network centralization. We divide the transaction into minor units through batching, which encourages any user to contribute proof and verification to this network to ensure a high degree of decentralization of the Orbiter network.
 - **Scalability:** As lightweight clients are supported, Orbiter Network could scale to over 200K+ nodes working simultaneously. Merker tree is stored locally on Data Nodes, while only Merker tree head is submitted to the mainnet.
 - **Zero Knowledge Proof (ZKP):** Orbiter network implements ZKPs to ensure data privacy and integrity, allowing nodes to validate transactions without revealing the underlying data, which enhances security by preventing data leaks and unauthorized access.
-- **Governance:** The ROB network features a built-in governance system in which stakeholders vote on network decisions, including protocol upgrades and resource allocation, aiming to create a decentralized autonomous community.
-- **Consensus Mechanism:** The ROB network node uses Delegate Proof of Stake (DPoS) to vote on information signatures, which is fast and efficient. If 2/3 of the nodes are verified for one transaction, the transaction is approved.
-- **Flexibility:** Smart contracts on ROB can be modified and upgraded, allowing developers to improve their applications without needing to deploy new contracts from scratch. The producers are assigned fine-grained responsibilities, with specific permission granted, enabling complex permission structures.
-- **Usability:** Orbiter provides comprehensive tools and documentation for developers, including SDKs, APIs, and a developer portal to facilitate DApp development.
+- **Governance:** The Orbiter Network features a built-in governance system in which stakeholders vote on network decisions, including protocol upgrades and resource allocation, aiming to create a decentralized autonomous community.
+- **Consensus Mechanism:** The Orbiter Network node uses Delegate Proof of Stake (DPoS) to vote on information signatures, which is fast and efficient. If 2/3 of the nodes are verified for one transaction, the transaction is approved.
+- **Flexibility:** Smart contracts on Orbiter Network can be modified and upgraded, allowing developers to improve their applications without needing to deploy new contracts from scratch. The producers are assigned fine-grained responsibilities, with specific permission granted, enabling complex permission structures.
+- **Usability:** Orbiter Network provides comprehensive tools and documentation for developers, including SDKs, APIs, and a developer portal to facilitate DApp development.
 - **Interoperability:** The Orbiter network is designed to support communication and interaction between different blockchain networks within Vizing Station, enabling interoperability and the creation of a broader blockchain ecosystem.
 
-Now that the Vizing Station is online and operational, we plan to launch the Orbiter Testnet in 2024.
+Now that the Vizing Station is online and operational[@VizingOnline], we plan to launch the Orbiter Testnet in 2024.
 
 # Multi-Prover Scheme For Vizing ZK-Rollup 
 
@@ -104,42 +104,44 @@ Orbiter Network’s dual-prover approach (which may extend more approaches in th
 
 ![de-layer](diagrams/de-layer.png){width=70% height=70%}
 
-Orbiter Network is a communication protocol designed for Vizing Station to enhance security through zero-knowledge proofs (ZKP) and support cross-chain communication for arbitrary information. To achieve this, Orbiter Network has developed five distinct types of nodes, each with specific responsibilities, ensuring efficient, secure, flexible, and stable network operation. Here is a detailed introduction to these five types of nodes:
+Orbiter Network is a communication protocol designed for Vizing Station to enhance security through zero-knowledge proofs (ZKP) and support cross-chain communication for arbitrary information. To achieve cross-chain communitation, Vizing rollup is structured into three layers: Sequencer Layer, Verifier Layer, and Prover Layer. Each layer operates in a decentralized manner, supported by the Orbiter Network. The Sequencer Layer collects and orders messages, assigns tasks, and submits the Vizing Merkle Tree to the mainnet. The verifier layer verifies the validity of ZKPs generated within Vizing Rollup, and the Prover Layer handles the calculation of ZKPs. 
+
+Each node in the Orbiter Network can operate in one of five modes, each with specific responsibilities to ensure efficient, secure, flexible, and stable network operation. Here is a detailed introduction to these five modes:
 
 ## Prover Mode
 
-Prover Mode is the core function in the Orbiter Network responsible for executing zero-knowledge proof computations. This mode require significant computational power. However, we also use our batch method to divide the ZKP into minimum batches, which is friendly for lightweight client users who can deploy it to compute with their computer CPU. The primary responsibilities include:
+Prover Mode is the core function in the Orbiter Network responsible for executing ZKP computations. This mode require significant computational power. However, our batch method divides the ZKP into smaller batches, making it accessible for lightweight client users who can use their computer CPUs for computation. The primary responsibilities include:
 
 - **Generating Proofs**: Nodes in Prover Mode generate zero-knowledge proofs to ensure the privacy and security of transactions and data.
 - **Collaborative Computing**: Multiple nodes can work together to improve computational efficiency and overall network performance.
-- **High-Performance Computing**: The node need robust processing capabilities and hardware support to generate complex mathematical proofs quickly.
+- **High-Performance Computing**: The node need robust processing capabilities and hardware support to efficient generate complex proofs.
 
 ## Verifier Mode
 
 Verifier Mode, with relatively low network bandwidth requirements, are responsible for verifying zero-knowledge proofs. Their primary responsibilities include:
 
-- **Proof Verification**: Verifier mode validate zero-knowledge proofs to ensure the legality and accuracy of data and transactions.
-- **Ensuring Security**: By verifying ZKPs, verification nodes prevent malicious data from entering the network, maintaining the system’s security and integrity.
-- **Low Bandwidth Requirement**: Since their main task is verification rather than computation, verification nodes require less bandwidth but need reliable connectivity and stability.
+- **Proof Verification**: Verifier Mode validates zero-knowledge proofs to ensure the legality and accuracy of data and transactions.
+- **Ensuring Security**: By verifying ZKPs, nodes in verification mode prevent malicious data from entering the network, maintaining the system’s security and integrity.
+- **Low Bandwidth Requirement**: Since their main task is verification rather than computation, verifier mode requires less bandwidth but need reliable connectivity and stability.
 
 ## Relayer Mode
 
-Relayer Mode handle cross-chain information in the Orbiter Network, requiring high bandwidth. Their primary responsibilities include:
+Relayer Mode handles cross-chain information in the Orbiter Network, requiring high bandwidth. Their primary responsibilities include:
 
-- **Cross-Chain Communication**: Nodes in Relayer Mode processes and transmit cross-chain messages, ensuring accurate and secure information exchange between blockchains.
-- **Data Relay**: Acting as intermediaries, Nodes in relayer mode bridge communication between nodes within the Orbiter network.
+- **Cross-Chain Communication Relay**: Nodes in Relayer Mode processe and transmit cross-chain messages, ensuring accurate and secure information exchange between blockchains.
+- **Cross-Mode Communication Relay**: Acting as intermediaries, nodes in Relayer Mode bridge communication between nodes operating in different modes within the Orbiter Network, supporting the network’s overall integrity and stability.
 
 ## Monitor Mode
 
 Monitoring Mode supervises the behavior of other nodes within the network, detecting and preventing fraudulent activities. Their main responsibilities include:
 
-- **Behavior Monitoring**: Real-time monitoring of the activities of computational, verification, and relayer nodes to ensure their operations comply with network rules.
+- **Behavior Monitoring**: Real-time monitoring of the activities of nodes in other modes, e.g., prover, verifier, and relayer to ensure their operations comply with network rules.
 - **Fraud Detection**: Analyzing node behaviors to identify and report potential fraud and malicious activities.
 - **Network Health Maintenance**: Ensuring all nodes operate according to established protocols and rules, maintaining the network's overall health.
   
 ## Data Mode
 
-Data Mode store rollup-generated off-chain information, ensuring data persistence and availability. Their main responsibilities include:
+Nodes in data mode store rollup-generated off-chain information, ensuring data persistence and availability. Their main responsibilities include:
 
 - **Data Storage**: Nodes in Data Mode store off-chain data generated by rollups, providing reliable data backup and retrieval services.
 - **High Availability**: Ensuring data is always available, supporting data requests and verification needs within the network.
@@ -158,7 +160,7 @@ Orbiter Network proposes a sophisticated staking mechanism and a hierarchical no
 
 Orbiter Network’s hierarchical node structure and staking mechanism work in tandem to ensure a secure, efficient, and decentralized communication protocol. By leveraging the strengths of zero-knowledge proofs and a multi-tiered node architecture, Orbiter Network achieves high performance while maintaining the trust and integrity essential for modern blockchain applications. This innovative design positions Orbiter Network as a leading solution in the blockchain ecosystem, capable of supporting diverse and complex cross-chain communication needs.
 
-In the Orbiter Network, every user can participate by running different types of nodes according to their hardware capabilities, contributing to the network’s overall functionality and flexibility. This approach ensures that the network can leverage a diverse range of resources, enhancing its decentralization and efficiency.
+User can particpate in building Orbiter Network by constructing their own Orbiter Nodes. The specfic mode of the running nodes is decided by user preference or the hardware capabilities. This approach ensures that the network can leverage a diverse range of resources, enhancing its decentralization and efficiency. By allowing users to choose or adapt their nodes based on their available resources, Orbiter Network promotes widespread participation and optimizes overall network performance.
 
 # What's Next for Orbiter Finance?
 
