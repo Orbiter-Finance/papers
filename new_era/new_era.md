@@ -21,11 +21,15 @@ header-includes:
     - \usepackage{array}
     - \usepackage{tabularx}
     - \pagestyle{plain}
-    - \fancyhead[RE,LO]{}
-    - \fancyhead[LE,Ro]{}
-    - \fancyhead[CO,CE]{}
-    - \fancyfoot[CO,CE]{}
-    - \fancyfoot[LE,RO]{\thepage}
+    - \pagestyle{fancy}
+    # - \fancyhead[RE,LO]{}
+    # - \fancyhead[LE,Ro]{}
+    # - \fancyhead[CO,CE]{}
+    # - \fancyfoot[CO,CE]{}
+    # - \fancyfoot[LE,RO]{\thepage}
+    - \fancyhead{}
+    - \fancyfoot{}
+    - \fancyhead[C]{\includegraphics[width=3.5cm]{diagrams/brand-pic.png}}
 ---
 
 # Recap Cross-Chain Bridge
@@ -39,7 +43,7 @@ In this new Layer 2-centric ecosystem, we captured 3 new demands:
 - **Cross-chain Communication.** Users have demands to transfer any format of messages besides assets across chains. For example, ENS plans to migrate the registry to L2, which increases the demand for Cross-chain identity recognition.
 - **Security issues.** L2 provides significant scalability and efficiency improvements but also brings many new security challenges. For example, establish a decentralized network of validators responsible for the verification and confirmation of cross-chain transactions, reducing reliance on a single entity.
 - **Privacy issues.** Users have privacy concerns while transferring communication cross-chain.
-- 
+  
 These three demands are still challenging in the blockchain community today. Orbiter will address these challenges as part of its long-term roadmap. Our brief introduction of our key contribution is listed below.
 
 # Vizing Station: One-Stop Cross-chain Communication Framework
@@ -52,13 +56,14 @@ Based on this new framework, Vizing station offers the following new features to
 - **Omni-Chain Lending:** Omni-Chain lending is a significant feature of the Vizing protocol. Users can securely and efficiently transfer assets between blockchains, enabling borrowing and lending operations across chains. This allows users to leverage their holdings on different chains, participate in a broader range of financial activities, and achieve better capital efficiency.
 - **Omni-Chain Gaming:** Vizing provides robust support for Omni-Chain gaming development. Game developers can seamlessly transfer game assets from one chain to another, creating a seamless Omni-Chain gaming experience. Players can trade, collect, and utilize game items on different blockchains, enjoying a broader gaming world and more interactive possibilities.
 - **Oracles:** Unlike traditional push-based oracles, the Vizing protocol allows the development of pull-based oracles. Third-party DApps can set their intervals to fetch the latest data from other chains and apply it to on-chain smart contracts. This flexible data retrieval method provides diverse and real-time data support for various use cases, further enhancing the usability and reliability of decentralized applications.
+- **Proofs Aggregation:** Vizing provides a ZK Proofs Aggregation service to significantly reduce the ZK Proofs on-chain verification cost. For the ZK developers, they just need to deploy their solidity verifier to Vizing Rollup, and submit their ZK Proofs to the Vizing Rollup, the proofs will be automatically aggregated and verified on Ethereum L1.
 <!-- - **Omni-Chain DAO Governance:** The Vizing protocol also supports Omni-Chain DAO governance, enabling governance organizations on Layer 2 to participate in decision-making and voting processes on Layer 1. This Omni-Chain governance model enhances the capabilities of decentralized autonomous organizations, allowing participants from different chains to manage collectively and consistently make decisions, fostering collaborative development in the blockchain ecosystem. -->
 
 ![Vizing Use Cases](diagrams/vzing_usecases.jpg)
 
 # Orbiter Network: Road to Decentralization
 
-Security issues are one big challenge we will solve for the Vizing Station. To address this problem, we introduce the Orbiter Network, a decentralized and scalable communication protocol built along with Vizing Station. Orbiter Network leverages the power of zero-knowledge proofs (ZKPs) to enhance security and support cross-chain communication for arbitrary data.  Supported by Orbiter, we are developing a Type-1 ZK-EVM to improve the security of ZK-Rollup, with over 200K+ nodes capable of zero-knowledge encryption. Orbiter Network aims to eliminate data tampering and fraud in cross-chain communications. The Orbiter Network participants are called producers.
+Security issues and network decentralization are big challenges we will solve for the Vizing Station. To address these problems, we introduce the Orbiter Network, a decentralized and scalable communication protocol built along with Vizing Station. Orbiter Network leverages the power of zero-knowledge proofs (ZKPs) to enhance security and support cross-chain communication for arbitrary data.  Supported by Orbiter, we are developing a Type-1 ZK-EVM to improve the security of ZK-Rollup, with over 200K+ nodes capable of zero-knowledge encryption. Orbiter Network aims to eliminate data tampering and fraud in cross-chain communications. The Orbiter Network participants are called producers.
 
 The key features of Orbiter Network are:
 
